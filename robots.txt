@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-Host: ukrplay.github.io
 Sitemap: https://ukrplay.github.io/sitemap.xml
