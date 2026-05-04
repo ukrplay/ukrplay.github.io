@@ -16,6 +16,8 @@
             --accent: #ffcc00;
             --blue: #0099ff;
             --lightblue: #00ccff;
+            --green: #00cc66;
+            --red: #ff4444;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -48,6 +50,10 @@
             0%   { transform: translateX(-150%) skewX(-25deg); }
             20%  { transform: translateX(300%) skewX(-25deg); }
             100% { transform: translateX(300%) skewX(-25deg); }
+        }
+        @keyframes commentSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         header { 
@@ -102,7 +108,6 @@
             transform: scale(1.03); 
         }
 
-        /* Компактний hero */
         .hero { 
             height: 360px; 
             display: flex; 
@@ -130,7 +135,6 @@
             margin-bottom: 12px; 
             object-fit: cover; 
         }
-
         .hero h1 { 
             font-size: 2.85rem; 
             margin-bottom: 6px; 
@@ -146,7 +150,20 @@
             color: var(--lightblue); 
             margin-bottom: 18px; 
         }
-
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            background: rgba(0,0,0,0.4);
+            padding: 5px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+        }
+        .stat-number { font-weight: bold; color: var(--accent); }
         .social-links { 
             display: flex; 
             justify-content: center; 
@@ -167,12 +184,11 @@
         }
         .social-links a:hover { 
             background: #ffcc00; 
-            color: #002b5e; 
             transform: scale(1.15) rotate(8deg); 
             box-shadow: 0 0 25px #ffcc00;
         }
+        .social-links a svg { width: 24px; height: 24px; }
 
-        /* Компактні фільтри */
         .filters {
             max-width: 1400px;
             margin: 0 auto 1.5rem;
@@ -211,11 +227,31 @@
             color: #002b5e;
             box-shadow: 0 0 20px rgba(255,204,0,0.6);
         }
+        .sort-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sort-label {
+            color: #ffcc00;
+            font-size: 0.98rem;
+            white-space: nowrap;
+        }
+        .sort-select {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,204,0,0.25);
+            border-radius: 50px;
+            padding: 9px 18px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.98rem;
+        }
+        .sort-select option { background: #0a1428; color: white; }
 
         .container { 
             max-width: 1400px; 
             margin: 0 auto; 
-            padding: 1.5rem 1.5rem 2rem; 
+            padding: 1rem 1.5rem 2rem; 
         }
 
         .games-grid {
@@ -223,7 +259,6 @@
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 20px;
         }
-
         .game-card {
             background: var(--card);
             backdrop-filter: blur(16px) saturate(180%);
@@ -246,12 +281,9 @@
             width: 100%;
             aspect-ratio: 2 / 3;
             object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: transform 0.6s ease;
         }
-        .game-card:hover img { 
-            transform: scale(1.1) rotate(1deg); 
-        }
-
+        .game-card:hover img { transform: scale(1.1) rotate(1deg); }
         .game-info { padding: 16px; }
         .game-info h3 { margin-bottom: 8px; color: white; font-size: 1.15rem; }
         .tag { 
@@ -263,11 +295,14 @@
             font-size: 0.82rem; 
             margin: 3px 3px 3px 0;
         }
+        .tag-updated { background: rgba(0,204,102,0.8); }
         .progress-container { margin-top: 10px; }
         .progress-label {
             font-size: 0.82rem;
             margin-bottom: 3px;
             color: #a0c0ff;
+            display: flex;
+            justify-content: space-between;
         }
         .progress-bar {
             height: 7px;
@@ -299,131 +334,241 @@
             backdrop-filter: blur(24px) saturate(180%);
             max-width: 1050px;
             width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
             border-radius: 20px;
-            overflow: hidden;
             border: 1px solid rgba(255,204,0,0.3);
             animation: modalPop 0.4s ease forwards;
             box-shadow: 0 20px 60px rgba(0,0,0,0.6);
         }
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .modal-content::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
         .modal-close { 
-            position: absolute; 
-            top: 16px; 
-            right: 22px; 
-            font-size: 2.6rem; 
-            cursor: pointer; 
-            color: #ffcc00; 
-            z-index: 10; 
+            position: sticky;
+            top: 20px;
+            right: 22px;
+            float: right;
+            width: 40px;
+            height: 40px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffcc00;
             transition: all 0.2s;
+            z-index: 10;
+            margin: 15px 15px 0 0;
         }
-        .modal-close:hover { transform: scale(1.2) rotate(90deg); }
+        .modal-close:hover { background: #ffcc00; color: #002b5e; transform: rotate(90deg); }
 
         .modal-body { 
             display: flex; 
-            flex-wrap: wrap; 
-            gap: 28px; 
-            padding: 35px; 
+            flex-direction: column;
+            padding: 15px 35px 35px 35px;
         }
-        .modal-img { flex: 1; min-width: 260px; }
-        .modal-img img { 
-            width: 100%; 
-            max-height: 60vh; 
-            object-fit: contain; 
-            border-radius: 16px; 
+        .modal-top {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            width: 100%;
         }
-        .modal-info { flex: 1; min-width: 260px; }
-        .modal-info h2 { 
-            color: var(--accent); 
-            margin-bottom: 16px; 
-            font-size: 2.3rem; 
-        }
+        .modal-img { flex: 1; min-width: 260px; max-width: 280px; }
+        .modal-img img { width: 100%; border-radius: 16px; }
+        .modal-info { flex: 2; min-width: 260px; }
+        .modal-info h2 { color: var(--accent); margin-bottom: 16px; font-size: 2rem; }
+        .modal-desc { color: #a0c0ff; line-height: 1.7; margin-bottom: 15px; font-size: 0.95rem; }
 
-        .download-btn, .back-btn {
-            padding: 14px 32px;
+        .modal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0 10px;
+        }
+        .download-btn, .back-btn, .share-btn {
+            padding: 12px 28px;
             border: none;
             border-radius: 50px;
-            font-size: 1.12rem;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            margin: 15px 8px 0 0;
             transition: all 0.3s ease;
         }
-
         .download-btn {
-            background: var(--accent);
+            background: linear-gradient(135deg, #ffcc00, #ff9900);
             color: #002b5e;
             position: relative;
             overflow: hidden;
         }
-        .download-btn:hover { 
-            background: #ffe033; 
-            transform: translateY(-3px); 
-        }
+        .download-btn:hover { transform: translateY(-3px); }
         .download-btn::after {
             content: '';
             position: absolute;
             top: -50%;
-            left: -50%;
-            width: 40%;
-            height: 400%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.45), transparent);
+            left: -100%;
+            width: 60%;
+            height: 200%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
             transform: skewX(-25deg);
-            animation: shine 3.5s infinite linear;
+            animation: shine 4s infinite;
         }
-
         .back-btn {
             background: rgba(255,255,255,0.15);
             color: white;
-            display: inline-flex;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-3px); }
+        .share-btn {
+            background: rgba(0,153,255,0.25);
+            color: #0099ff;
+        }
+        .share-btn:hover { background: #0099ff; color: white; transform: translateY(-3px); }
+
+        /* Коментарі */
+        .comments-full-width {
+            width: 100%;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(255,204,0,0.3);
+        }
+        .comments-title {
+            color: #ffcc00;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            flex-wrap: wrap;
         }
-        .back-btn:hover {
-            background: rgba(255,255,255,0.25);
-            transform: translateY(-3px);
+        .comments-count {
+            background: rgba(0,153,255,0.3);
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
         }
+        .comment-form {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        .comment-form input, .comment-form textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,204,0,0.25);
+            border-radius: 12px;
+            padding: 12px 15px;
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            font-family: inherit;
+        }
+        .comment-form input:focus, .comment-form textarea:focus {
+            outline: none;
+            border-color: #ffcc00;
+        }
+        .comment-form textarea { min-height: 80px; resize: vertical; }
+        .comment-form button {
+            background: linear-gradient(135deg, #ffcc00, #ff9900);
+            color: #002b5e;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .comment-form button:hover { transform: translateY(-2px); }
+        .comments-list { width: 100%; }
+        .comment-item {
+            background: rgba(0,0,0,0.25);
+            border-radius: 14px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            animation: commentSlide 0.3s ease;
+            width: 100%;
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .comment-author { color: #ffcc00; font-weight: bold; font-size: 0.85rem; }
+        .comment-date { color: #88aaff; font-size: 0.7rem; }
+        .comment-text { color: #e0f0ff; line-height: 1.5; font-size: 0.9rem; }
+        .loading-comments, .no-comments { text-align: center; padding: 30px; color: #88aaff; }
+        .comment-message {
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+        }
+        .comment-message.success { background: rgba(0,200,100,0.15); border: 1px solid #00cc66; color: #00ffaa; }
+        .comment-message.error { background: rgba(255,50,50,0.15); border: 1px solid #ff4444; color: #ff8888; }
 
-        /* ====================== ПРОКРУЧУВАННЯ МОДАЛКИ НА МОБІЛЬНИХ ====================== */
+        .scroll-top {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 45px;
+            height: 45px;
+            background: #ffcc00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 99;
+            font-size: 20px;
+            font-weight: bold;
+            color: #002b5e;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .scroll-top.show { opacity: 1; visibility: visible; }
+        .scroll-top:hover { transform: translateY(-3px); }
+
+        .footer {
+            background: rgba(5,15,40,0.92);
+            backdrop-filter: blur(12px);
+            padding: 25px;
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255,204,0,0.25);
+        }
+        .footer p { color: #88aaff; font-size: 0.8rem; }
+        .no-results { text-align: center; padding: 40px; color: #88aaff; grid-column: 1/-1; }
+
         @media (max-width: 768px) {
-            .nav { padding: 0.8rem 1rem; }
-            .logo { font-size: 1.8rem; }
-            .search { margin: 0; padding: 10px 16px; font-size: 0.98rem; }
-            .filters { margin-bottom: 1.2rem; padding: 0 1rem; gap: 1rem; }
-
             .hero { height: 310px; }
             .hero h1 { font-size: 2.25rem; }
-            .hero p { font-size: 1.15rem; margin-bottom: 14px; }
-            .hero-logo { width: 96px; height: 96px; margin-bottom: 10px; }
-
-            .container { padding: 1rem 1rem 1.5rem; }
-            .games-grid { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 18px; }
-
-            .modal-body { padding: 28px 20px 30px; gap: 22px; }
-
-            .modal-content {
-                max-height: 94vh;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                border-radius: 24px;
-            }
-            .modal-body {
-                max-height: calc(94vh - 20px);
-            }
-            .modal-info p {
-                max-height: none;
-                overflow-wrap: break-word;
-            }
+            .hero p { font-size: 1.15rem; }
+            .hero-logo { width: 96px; height: 96px; }
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+            .modal-body { padding: 10px 20px 20px 20px; }
+            .modal-img { min-width: 180px; max-width: 200px; }
+            .modal-info h2 { font-size: 1.5rem; }
+            .nav { padding: 0.8rem 1rem; }
+            .logo { font-size: 1.8rem; }
+            .search { margin: 0; padding: 10px 16px; font-size: 0.95rem; }
+            .sort-label { font-size: 0.85rem; }
+            .sort-select { padding: 7px 14px; font-size: 0.85rem; }
         }
-
         @media (max-width: 480px) {
             .hero { height: 290px; }
-            .hero h1 { font-size: 2.05rem; }
-            .hero p { font-size: 1.08rem; }
-            .games-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 16px; }
-
-            .modal-content {
-                max-height: 96vh;
-                border-radius: 20px;
-            }
+            .hero h1 { font-size: 1.8rem; }
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
+            .modal-img { min-width: 140px; max-width: 160px; }
+            .modal-actions { flex-direction: column; }
+            .download-btn, .back-btn, .share-btn { width: 100%; text-align: center; }
         }
     </style>
 </head>
@@ -432,26 +577,34 @@
     <header>
         <div class="nav">
             <div class="logo" onclick="goToHome()">UkrPlay</div>
-            <input type="text" class="search" placeholder="🔍 Пошук ігор..." onkeyup="applyFilters()">
+            <input type="text" class="search" placeholder="🔍 Пошук ігор..." id="searchInput" onkeyup="applyFilters()">
         </div>
     </header>
 
     <section class="hero">
         <div class="hero-content">
-            <img src="logo.png" alt="Logo" class="hero-logo">
+            <img src="logo.png" alt="Logo" class="hero-logo" onerror="this.src='https://placehold.co/200x200/0a1428/ffcc00?text=U'">
             <h1>Грайте українською</h1>
             <p>з машинним перекладом, але з українізатором</p>
+            <div class="stats">
+		<div class="stat-item">🤖 ШІ-переклад</div>
+                <div class="stat-item">📦 <span class="stat-number" id="gamesCount">0</span> ігор</div>
+            </div>
             <div class="social-links">
-                <a href="https://www.youtube.com/channel/UC7RZe16lzkqlsrv1ahgQZFA" target="_blank" title="YouTube"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .5 6.186C0 8.07 0 12 0 12s0 3.93.5 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.377.505 9.377.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg></a>
-                <a href="https://t.me/UkrPlayUA" target="_blank" title="Telegram"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#229ED9"/><path d="M17.5 7.5L5.5 12L9.5 13.5L11 17.5L17.5 7.5Z" fill="white"/><path d="M11 13.5L17.5 7.5L11 13.5Z" fill="#229ED9"/></svg></a>
-                <a href="https://x.com/" target="_blank" title="X"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#000000"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H1.15l8.6-9.83L0 1.154h7.594l5.243 6.932L18.901 1.153zM17.61 20.644h2.039L6.486 3.24H4.298L17.61 20.644z"/></svg></a>
+                <a href="https://www.youtube.com/channel/UC7RZe16lzkqlsrv1ahgQZFA" target="_blank" title="YouTube">
+                    <svg viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .5 6.186C0 8.07 0 12 0 12s0 3.93.5 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.377.505 9.377.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg>
+                </a>
+                <a href="https://t.me/UkrPlayUA" target="_blank" title="Telegram">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#229ED9"/><path d="M17.5 7.5L5.5 12L9.5 13.5L11 17.5L17.5 7.5Z" fill="white"/><path d="M11 13.5L17.5 7.5L11 13.5Z" fill="#229ED9"/></svg>
+                </a>
+                <a href="https://x.com/" target="_blank" title="X">
+                    <svg viewBox="0 0 24 24" fill="white"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H1.15l8.6-9.83L0 1.154h7.594l5.243 6.932L18.901 1.153zM17.61 20.644h2.039L6.486 3.24H4.298L17.61 20.644z"/></svg>
+                </a>
             </div>
         </div>
     </section>
 
     <div class="container">
-        <h2 style="color:#ffcc00; text-align:center; margin:2rem 0 1.5rem; font-size:2.4rem;">🔥 Всі ігри</h2>
-
         <div class="filters">
             <div class="filter-group">
                 <strong>Тип перекладу:</strong>
@@ -460,6 +613,14 @@
                 <button class="filter-btn" data-filter="translation" data-value="Машред">Машред</button>
                 <button class="filter-btn" data-filter="translation" data-value="Ручпер">Ручпер</button>
             </div>
+            <div class="sort-wrapper">
+                <span class="sort-label">📌 Сортувати:</span>
+                <select class="sort-select" id="sortSelect" onchange="sortGames()">
+                    <option value="updated">🕐 За оновленням</option>
+                    <option value="quality">⭐ За якістю</option>
+                    <option value="name">🔤 За назвою</option>
+                </select>
+            </div>
         </div>
 
         <div class="games-grid" id="games-grid"></div>
@@ -467,12 +628,19 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <div class="modal-close" onclick="closeModal()">×</div>
+            <div class="modal-close" onclick="closeModal()">✕</div>
             <div class="modal-body" id="modal-body"></div>
         </div>
     </div>
 
+    <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</div>
+
+    <footer class="footer">
+        <p>© 2024-2026 UkrPlay — Українізатори ігор</p>
+    </footer>
+
     <script>
+        // ========== ІГРИ ==========
         const games = [
     {
         id: "cthulhabbys",
@@ -815,24 +983,150 @@
 ];
 
         let selectedTranslation = "all";
+        let currentGameId = null;
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNK3QpqbBtUfJWVLF7-6503xBAcpg94ePXMHS0KlY7iWjQci2dDbBqYgN9UHP4E4BE/exec';
+
+        // ========== КОМЕНТАРІ ==========
+        async function loadComments(gameId) {
+            const container = document.getElementById('comments-list');
+            if (!container) return;
+            container.innerHTML = '<div class="loading-comments">⏳ Завантаження коментарів...</div>';
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=get&gameId=${encodeURIComponent(gameId)}`);
+                const data = await res.json();
+                if (data.success && data.comments) {
+                    displayComments(data.comments);
+                    updateCommentsCount(data.comments.length);
+                } else {
+                    container.innerHTML = '<div class="no-comments">💬 Поки що немає коментарів. Будьте першим!</div>';
+                    updateCommentsCount(0);
+                }
+            } catch(e) {
+                container.innerHTML = '<div class="no-comments">⚠️ Не вдалося завантажити коментарі.</div>';
+            }
+        }
+
+        function displayComments(comments) {
+            const container = document.getElementById('comments-list');
+            if (!comments || comments.length === 0) {
+                container.innerHTML = '<div class="no-comments">💬 Поки що немає коментарів. Будьте першим!</div>';
+                return;
+            }
+            container.innerHTML = comments.map(c => `
+                <div class="comment-item">
+                    <div class="comment-header">
+                                                <span class="comment-author">👤 ${escapeHtml(c.author)}</span>
+                        <span class="comment-date">${formatDate(c.date)}</span>
+                    </div>
+                    <div class="comment-text">${escapeHtml(c.text)}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateCommentsCount(count) {
+            const el = document.getElementById('comments-count');
+            if (el) {
+                if (count === 0) el.textContent = 'Немає коментарів';
+                else if (count === 1) el.textContent = '1 коментар';
+                else if (count < 5) el.textContent = `${count} коментарі`;
+                else el.textContent = `${count} коментарів`;
+            }
+        }
+
+        async function addComment(gameId, author, text) {
+            if (!text.trim()) { showMsg('Введіть текст', 'error'); return; }
+            try {
+                const params = new URLSearchParams({ action: 'add', gameId, author: author || 'Анонім', text: text.trim() });
+                const res = await fetch(`${SCRIPT_URL}?${params}`);
+                const data = await res.json();
+                if (data.success) {
+                    showMsg('✅ Коментар додано!', 'success');
+                    document.getElementById('comment-author').value = '';
+                    document.getElementById('comment-text').value = '';
+                    await loadComments(gameId);
+                } else {
+                    showMsg(`❌ ${data.error}`, 'error');
+                }
+            } catch(e) { showMsg('❌ Помилка', 'error'); }
+        }
+
+        function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+        function formatDate(ds) {
+            const d = new Date(ds), now = new Date(), diff = now - d;
+            if (diff < 60000) return 'щойно';
+            if (diff < 3600000) return `${Math.floor(diff/60000)} хв тому`;
+            if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('uk-UA', {hour:'2-digit',minute:'2-digit'});
+            return d.toLocaleDateString('uk-UA', {day:'numeric',month:'short'});
+        }
+        function showMsg(msg, type) {
+            const el = document.getElementById('comment-msg');
+            if (el) { el.textContent = msg; el.className = `comment-message ${type}`; setTimeout(() => { el.textContent = ''; el.className = 'comment-message'; }, 5000); }
+        }
+
+        function initComments(gameId) {
+            currentGameId = gameId;
+            let container = document.getElementById('comments-full');
+            if (!container) {
+                const modalBody = document.getElementById('modal-body');
+                if (!modalBody) return;
+                container = document.createElement('div');
+                container.id = 'comments-full';
+                container.className = 'comments-full-width';
+                container.innerHTML = `
+                    <div class="comments-title">💬 Коментарі <span id="comments-count" class="comments-count">Завантаження...</span></div>
+                    <div id="comment-msg" class="comment-message"></div>
+                    <div id="comments-list" class="comments-list"></div>
+                    <div class="comment-form">
+                        <input type="text" id="comment-author" placeholder="👤 Ваше ім'я (необов'язково)" maxlength="50">
+                        <textarea id="comment-text" placeholder="💬 Напишіть коментар... (Ctrl+Enter)" maxlength="2000"></textarea>
+                        <button onclick="submitComment()">📤 Залишити коментар</button>
+                    </div>
+                `;
+                modalBody.appendChild(container);
+            }
+            loadComments(gameId);
+            const ta = document.getElementById('comment-text');
+            if (ta) { ta.removeEventListener('keydown', keyHandler); ta.addEventListener('keydown', keyHandler); }
+        }
+
+        function keyHandler(e) { if ((e.ctrlKey||e.metaKey) && e.key==='Enter') { e.preventDefault(); submitComment(); } }
+        async function submitComment() {
+            const author = document.getElementById('comment-author')?.value.trim() || '';
+            const text = document.getElementById('comment-text')?.value.trim();
+            if (!currentGameId || !text) return;
+            await addComment(currentGameId, author, text);
+        }
+
+        // ========== ФУНКЦІЇ ІГОР ==========
+        function getGameDate(cats) {
+            const upd = cats.find(c => c.includes('Оновлено'));
+            if (upd) { 
+                const m = upd.match(/\d{2}\.\d{2}\.\d{2}/); 
+                if (m) { 
+                    const [d,mo,y] = m[0].split('.'); 
+                    return new Date(2000 + parseInt(y), parseInt(mo) - 1, parseInt(d)); 
+                } 
+            }
+            return new Date(0);
+        }
 
         function createCard(game, index) {
             const card = document.createElement('div');
             card.className = 'game-card';
             card.style.animationDelay = `${150 + index * 100}ms`;
-
-            let tagsHTML = game.categories.map(cat => `<span class="tag">${cat}</span>`).join('');
-
+            let tagsHTML = game.categories.map(cat => {
+                let cls = '';
+                if (cat.includes('Оновлено')) cls = 'tag-updated';
+                return `<span class="tag ${cls}">${escapeHtml(cat)}</span>`;
+            }).join('');
             card.innerHTML = `
-                <img src="${game.img}" alt="${game.title}">
+                <img src="${game.img}" alt="${escapeHtml(game.title)}" loading="lazy" onerror="this.src='https://placehold.co/400x600/1a2a4a/ffcc00?text=UkrPlay'">
                 <div class="game-info">
-                    <h3>${game.title}</h3>
+                    <h3>${escapeHtml(game.title)}</h3>
                     <div>${tagsHTML}</div>
                     <div class="progress-container">
-                        <div class="progress-label">Якість редагування: ${game.quality}%</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${game.quality}%"></div>
-                        </div>
+                        <div class="progress-label"><span>Якість редагування</span><span>${game.quality}%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:${game.quality}%"></div></div>
                     </div>
                 </div>
             `;
@@ -842,58 +1136,79 @@
 
         function showModal(game) {
             const modalBody = document.getElementById('modal-body');
-            let tagsHTML = game.categories.map(cat => `<span class="tag">${cat}</span>`).join('');
-
+            let tagsHTML = game.categories.map(cat => {
+                let cls = '';
+                if (cat.includes('Оновлено')) cls = 'tag-updated';
+                return `<span class="tag ${cls}">${escapeHtml(cat)}</span>`;
+            }).join('');
+            
             modalBody.innerHTML = `
-                <div class="modal-img"><img src="${game.img}" alt="${game.title}"></div>
-                <div class="modal-info">
-                    <h2>${game.title}</h2>
-                    <p>${game.desc}</p>
-                    <div style="margin:15px 0;">${tagsHTML}</div>
-                    <div class="progress-container" style="margin:20px 0;">
-                        <div class="progress-label">Якість редагування: ${game.quality}%</div>
-                        <div class="progress-bar" style="height:12px;">
-                            <div class="progress-fill" style="width:${game.quality}%"></div>
+                <div class="modal-top">
+                    <div class="modal-img"><img src="${game.img}" alt="${escapeHtml(game.title)}" onerror="this.src='https://placehold.co/400x600/1a2a4a/ffcc00?text=UkrPlay'"></div>
+                    <div class="modal-info">
+                        <h2>${escapeHtml(game.title)}</h2>
+                        <div class="modal-desc">${escapeHtml(game.desc)}</div>
+                        <div style="margin:10px 0;">${tagsHTML}</div>
+                        <div class="progress-container" style="margin:15px 0;">
+                            <div class="progress-label"><span>Якість редагування</span><span>${game.quality}%</span></div>
+                            <div class="progress-bar" style="height:6px;"><div class="progress-fill" style="width:${game.quality}%"></div></div>
                         </div>
-                    </div>
-                    
-                    <div style="margin-top: 25px;">
-                        <button class="download-btn" onclick="window.open('${game.patchLink}','_blank')">📥 Завантажити</button>
-                        <button class="back-btn" onclick="closeModalAndGoHome()">← Усі ігри</button>
+                        <div class="modal-actions">
+                            <button class="download-btn" onclick="window.open('${game.patchLink}','_blank')">📥 Завантажити</button>
+                            <button class="share-btn" onclick="shareGame('${escapeHtml(game.title)}','${game.id}')">🔗 Поділитися</button>
+                            <button class="back-btn" onclick="closeModalAndGoHome()">← Усі ігри</button>
+                        </div>
                     </div>
                 </div>
             `;
             document.getElementById('modal').style.display = 'flex';
+            setTimeout(() => initComments(game.id), 100);
         }
 
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
+        function shareGame(title, id) {
+            const url = window.location.origin + window.location.pathname + '#' + id;
+            if (navigator.share) navigator.share({ title, text: 'Перегляньте українізатор для ' + title, url }).catch(() => copyToClip(url));
+            else copyToClip(url);
         }
-
-        // Нова функція: закрити модалку + повернутися на головну з плавним скролом
-        function closeModalAndGoHome() {
-            closeModal();
-            setTimeout(() => {
-                window.scrollTo({ 
-                    top: 0, 
-                    behavior: 'smooth' 
-                });
-                history.replaceState(null, null, window.location.pathname);
-            }, 300);
-        }
+        function copyToClip(t) { navigator.clipboard.writeText(t).then(() => showMsg('✅ Посилання скопійовано!', 'success')); }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function closeModalAndGoHome() { closeModal(); setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); history.replaceState(null, null, window.location.pathname); }, 200); }
 
         function applyFilters() {
-            const term = document.querySelector('.search').value.toLowerCase().trim();
-
-            document.querySelectorAll('.game-card').forEach(card => {
+            const term = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.game-card');
+            let visible = 0;
+            cards.forEach(card => {
                 const title = card.querySelector('h3').textContent.toLowerCase();
                 const game = games.find(g => g.title === card.querySelector('h3').textContent);
-
-                const matchesSearch = !term || title.includes(term);
-                const hasTranslation = selectedTranslation === "all" || game.categories.includes(selectedTranslation);
-
-                card.style.display = (matchesSearch && hasTranslation) ? 'block' : 'none';
+                const matchSearch = !term || title.includes(term);
+                const matchFilter = selectedTranslation === "all" || (game && game.categories.includes(selectedTranslation));
+                if (matchSearch && matchFilter) { card.style.display = 'block'; visible++; }
+                else { card.style.display = 'none'; }
             });
+            const grid = document.getElementById('games-grid');
+            let noRes = document.getElementById('no-results');
+            if (visible === 0 && cards.length) { 
+                if (!noRes) { 
+                    const msg = document.createElement('div'); 
+                    msg.id = 'no-results'; 
+                    msg.className = 'no-results'; 
+                    msg.innerHTML = '🔍 Нічого не знайдено'; 
+                    grid.appendChild(msg); 
+                } 
+            } else if (noRes) { noRes.remove(); }
+        }
+
+        function sortGames() {
+            const sortBy = document.getElementById('sortSelect').value;
+            let sorted = [...games];
+            if (sortBy === 'quality') sorted.sort((a,b) => b.quality - a.quality);
+            else if (sortBy === 'name') sorted.sort((a,b) => a.title.localeCompare(b.title, 'uk'));
+            else if (sortBy === 'updated') sorted.sort((a,b) => getGameDate(b.categories) - getGameDate(a.categories));
+            const grid = document.getElementById('games-grid');
+            grid.innerHTML = '';
+            sorted.forEach((g,i) => grid.appendChild(createCard(g,i)));
+            applyFilters();
         }
 
         function initFilters() {
@@ -910,32 +1225,48 @@
         function goToHome() {
             const logo = document.querySelector('.logo');
             logo.classList.add('logo-click');
-            setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                history.replaceState(null, null, window.location.pathname);
-                logo.classList.remove('logo-click');
+            setTimeout(() => { 
+                window.scrollTo({ top: 0, behavior: 'smooth' }); 
+                history.replaceState(null, null, window.location.pathname); 
+                logo.classList.remove('logo-click'); 
             }, 450);
         }
 
         function openFromHash() {
             const hash = window.location.hash.substring(1);
-            if (!hash) return;
-            const game = games.find(g => g.id === hash);
-            if (game) setTimeout(() => showModal(game), 500);
+            if (hash) { 
+                const game = games.find(g => g.id === hash); 
+                if (game) setTimeout(() => showModal(game), 500); 
+            }
+        }
+
+        function initScrollTop() {
+            const btn = document.getElementById('scrollTop');
+            window.addEventListener('scroll', () => { 
+                if (window.scrollY > 300) btn.classList.add('show'); 
+                else btn.classList.remove('show'); 
+            });
+        }
+
+        function updateGamesCount() { 
+            document.getElementById('gamesCount').textContent = games.length; 
         }
 
         window.onload = () => {
+            initScrollTop();
+            
+            // Спочатку сортуємо за оновленням
+            const sorted = [...games].sort((a,b) => getGameDate(b.categories) - getGameDate(a.categories));
+            
             const grid = document.getElementById('games-grid');
-            games.forEach((game, i) => grid.appendChild(createCard(game, i)));
-
+            sorted.forEach((g,i) => grid.appendChild(createCard(g,i)));
+            
+            updateGamesCount();
             initFilters();
             openFromHash();
             window.addEventListener('hashchange', openFromHash);
+            document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
         };
-
-        document.getElementById('modal').addEventListener('click', e => {
-            if (e.target === e.currentTarget) closeModal();
-        });
     </script>
 </body>
 </html>
