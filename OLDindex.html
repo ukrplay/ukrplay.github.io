@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="slxd42MLGDM-ekgNSsRKpqEiS5TJWykS9bVcIbZmJBM" />
+    <meta name="description" content="UkrPlay — сайт з українськими перекладами ігор за допомогою ШІ">
+    <title>UkrPlay — Ігри українською</title>
+    <link rel="canonical" href="https://ukrplay.github.io/">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+    <style>
+        :root {
+            --bg: #0a1428;
+            --card: rgba(20, 35, 70, 0.75);
+            --accent: #ffcc00;
+            --blue: #0099ff;
+            --lightblue: #00ccff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: #e0f0ff;
+            line-height: 1.6;
+            background-image: 
+                linear-gradient(rgba(0,20,60,0.85), rgba(10,20,40,0.95)),
+                url('images/back.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        @keyframes fadeInUp { 
+            from { opacity: 0; transform: translateY(40px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        @keyframes modalPop { 
+            from { opacity: 0; transform: scale(0.7); } 
+            to { opacity: 1; transform: scale(1); } 
+        }
+        @keyframes logoClick { 
+            0% { transform: scale(1); } 
+            40% { transform: scale(1.18) rotate(10deg); } 
+            70% { transform: scale(0.92) rotate(-6deg); } 
+            100% { transform: scale(1) rotate(0); } 
+        }
+        @keyframes shine { 
+            0%   { transform: translateX(-150%) skewX(-25deg); }
+            20%  { transform: translateX(300%) skewX(-25deg); }
+            100% { transform: translateX(300%) skewX(-25deg); }
+        }
+
+        header { 
+            background: rgba(5,15,40,0.92); 
+            backdrop-filter: blur(16px) saturate(180%); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            border-bottom: 1px solid rgba(255,204,0,0.25);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .nav { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 0.9rem 1.5rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 1rem;
+        }
+        .logo { 
+            font-size: 2.05rem; 
+            font-weight: bold; 
+            color: #ffffff; 
+            text-shadow: none; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            white-space: nowrap;
+        }
+        .logo:hover { opacity: 0.9; }
+        .logo-click { animation: logoClick 0.45s ease forwards; }
+
+        .search {
+            flex: 1 1 auto;
+            max-width: 420px;
+            min-width: 220px;
+            margin: 0 1rem;
+            padding: 12px 20px; 
+            background: rgba(255,255,255,0.08); 
+            backdrop-filter: blur(16px) saturate(180%); 
+            border: 1px solid rgba(255,204,0,0.25); 
+            border-radius: 50px; 
+            color: white; 
+            font-size: 1.02rem; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3),
+                        inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .search:focus { 
+            box-shadow: 0 0 0 4px rgba(0,153,255,0.4),
+                        0 8px 32px rgba(0,0,0,0.3);
+            transform: scale(1.03); 
+        }
+
+        /* Компактний hero */
+        .hero { 
+            height: 360px; 
+            display: flex; 
+            align-items: center; 
+            text-align: center; 
+            background: linear-gradient(rgba(0,20,60,0.82), rgba(0,40,100,0.9)); 
+            position: relative; 
+        }
+        .hero::before { 
+            content: ''; 
+            position: absolute; 
+            inset: 0; 
+            background: url('images/hero.jpg') center/cover; 
+            filter: brightness(0.55); 
+            z-index: -1; 
+        }
+        .hero-content { max-width: 900px; margin: 0 auto; z-index: 2; }
+        .hero-logo { 
+            width: 110px; 
+            height: 110px; 
+            border-radius: 50%; 
+            border: 5px solid #ffcc00; 
+            box-shadow: 0 0 25px rgba(255,204,0,0.5),
+                        0 0 40px rgba(255,204,0,0.25);
+            margin-bottom: 12px; 
+            object-fit: cover; 
+        }
+
+        .hero h1 { 
+            font-size: 2.85rem; 
+            margin-bottom: 6px; 
+            color: var(--accent); 
+            text-shadow: 
+                0 4px 20px rgba(0,0,0,0.75),
+                0 0 10px #ffcc00,
+                0 0 18px #ffcc00,
+                0 0 28px rgba(255,204,0,0.35);
+        }
+        .hero p { 
+            font-size: 1.25rem; 
+            color: var(--lightblue); 
+            margin-bottom: 18px; 
+        }
+
+        .social-links { 
+            display: flex; 
+            justify-content: center; 
+            gap: 16px; 
+            margin-top: 10px; 
+        }
+        .social-links a { 
+            width: 48px; 
+            height: 48px; 
+            background: rgba(255,255,255,0.15); 
+            backdrop-filter: blur(12px) saturate(180%); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .social-links a:hover { 
+            background: #ffcc00; 
+            color: #002b5e; 
+            transform: scale(1.15) rotate(8deg); 
+            box-shadow: 0 0 25px #ffcc00;
+        }
+
+        /* Компактні фільтри */
+        .filters {
+            max-width: 1400px;
+            margin: 0 auto 1.5rem;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-group strong {
+            color: #ffcc00;
+            white-space: nowrap;
+            font-size: 1.05rem;
+        }
+        .filter-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.98rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .filter-btn:hover { background: rgba(255,255,255,0.2); }
+        .filter-btn.active {
+            background: var(--accent);
+            color: #002b5e;
+            box-shadow: 0 0 20px rgba(255,204,0,0.6);
+        }
+
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 1.5rem 1.5rem 2rem; 
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card {
+            background: var(--card);
+            backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,204,0,0.25);
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0;
+            animation: fadeInUp 0.6s forwards;
+            transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        .game-card:hover { 
+            transform: translateY(-18px) scale(1.05);
+            box-shadow: 0 0 45px rgba(255,204,0,0.5),
+                        0 35px 70px rgba(0,153,255,0.45);
+            border-color: rgba(255,204,0,0.6);
+        }
+        .game-card img {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .game-card:hover img { 
+            transform: scale(1.1) rotate(1deg); 
+        }
+
+        .game-info { padding: 16px; }
+        .game-info h3 { margin-bottom: 8px; color: white; font-size: 1.15rem; }
+        .tag { 
+            display: inline-block;
+            background: rgba(0,153,255,0.8); 
+            color: #fff; 
+            padding: 4px 11px; 
+            border-radius: 30px; 
+            font-size: 0.82rem; 
+            margin: 3px 3px 3px 0;
+        }
+        .progress-container { margin-top: 10px; }
+        .progress-label {
+            font-size: 0.82rem;
+            margin-bottom: 3px;
+            color: #a0c0ff;
+        }
+        .progress-bar {
+            height: 7px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ccff, #ffcc00);
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+
+        /* Модальне вікно */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(5,15,45,0.94);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .modal-content {
+            background: rgba(15,30,70,0.96);
+            backdrop-filter: blur(24px) saturate(180%);
+            max-width: 1050px;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,204,0,0.3);
+            animation: modalPop 0.4s ease forwards;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .modal-close { 
+            position: absolute; 
+            top: 16px; 
+            right: 22px; 
+            font-size: 2.6rem; 
+            cursor: pointer; 
+            color: #ffcc00; 
+            z-index: 10; 
+            transition: all 0.2s;
+        }
+        .modal-close:hover { transform: scale(1.2) rotate(90deg); }
+
+        .modal-body { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 28px; 
+            padding: 35px; 
+        }
+        .modal-img { flex: 1; min-width: 260px; }
+        .modal-img img { 
+            width: 100%; 
+            max-height: 60vh; 
+            object-fit: contain; 
+            border-radius: 16px; 
+        }
+        .modal-info { flex: 1; min-width: 260px; }
+        .modal-info h2 { 
+            color: var(--accent); 
+            margin-bottom: 16px; 
+            font-size: 2.3rem; 
+        }
+
+        .download-btn, .back-btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.12rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 15px 8px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn {
+            background: var(--accent);
+            color: #002b5e;
+            position: relative;
+            overflow: hidden;
+        }
+        .download-btn:hover { 
+            background: #ffe033; 
+            transform: translateY(-3px); 
+        }
+        .download-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 40%;
+            height: 400%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.45), transparent);
+            transform: skewX(-25deg);
+            animation: shine 3.5s infinite linear;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-3px);
+        }
+
+        /* ====================== ПРОКРУЧУВАННЯ МОДАЛКИ НА МОБІЛЬНИХ ====================== */
+        @media (max-width: 768px) {
+            .nav { padding: 0.8rem 1rem; }
+            .logo { font-size: 1.8rem; }
+            .search { margin: 0; padding: 10px 16px; font-size: 0.98rem; }
+            .filters { margin-bottom: 1.2rem; padding: 0 1rem; gap: 1rem; }
+
+            .hero { height: 310px; }
+            .hero h1 { font-size: 2.25rem; }
+            .hero p { font-size: 1.15rem; margin-bottom: 14px; }
+            .hero-logo { width: 96px; height: 96px; margin-bottom: 10px; }
+
+            .container { padding: 1rem 1rem 1.5rem; }
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 18px; }
+
+            .modal-body { padding: 28px 20px 30px; gap: 22px; }
+
+            .modal-content {
+                max-height: 94vh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 24px;
+            }
+            .modal-body {
+                max-height: calc(94vh - 20px);
+            }
+            .modal-info p {
+                max-height: none;
+                overflow-wrap: break-word;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero { height: 290px; }
+            .hero h1 { font-size: 2.05rem; }
+            .hero p { font-size: 1.08rem; }
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 16px; }
+
+            .modal-content {
+                max-height: 96vh;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav">
+            <div class="logo" onclick="goToHome()">UkrPlay</div>
+            <input type="text" class="search" placeholder="🔍 Пошук ігор..." onkeyup="applyFilters()">
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <img src="logo.png" alt="Logo" class="hero-logo">
+            <h1>Грайте українською</h1>
+            <p>з машинним перекладом, але з українізатором</p>
+            <div class="social-links">
+                <a href="https://www.youtube.com/channel/UC7RZe16lzkqlsrv1ahgQZFA" target="_blank" title="YouTube"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .5 6.186C0 8.07 0 12 0 12s0 3.93.5 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.377.505 9.377.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg></a>
+                <a href="https://t.me/UkrPlayUA" target="_blank" title="Telegram"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#229ED9"/><path d="M17.5 7.5L5.5 12L9.5 13.5L11 17.5L17.5 7.5Z" fill="white"/><path d="M11 13.5L17.5 7.5L11 13.5Z" fill="#229ED9"/></svg></a>
+                <a href="https://x.com/" target="_blank" title="X"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#000000"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H1.15l8.6-9.83L0 1.154h7.594l5.243 6.932L18.901 1.153zM17.61 20.644h2.039L6.486 3.24H4.298L17.61 20.644z"/></svg></a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <h2 style="color:#ffcc00; text-align:center; margin:2rem 0 1.5rem; font-size:2.4rem;">🔥 Всі ігри</h2>
+
+        <div class="filters">
+            <div class="filter-group">
+                <strong>Тип перекладу:</strong>
+                <button class="filter-btn active" data-filter="translation" data-value="all">Всі</button>
+                <button class="filter-btn" data-filter="translation" data-value="Машпер">Машпер</button>
+                <button class="filter-btn" data-filter="translation" data-value="Машред">Машред</button>
+                <button class="filter-btn" data-filter="translation" data-value="Ручпер">Ручпер</button>
+            </div>
+        </div>
+
+        <div class="games-grid" id="games-grid"></div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal()">×</div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const games = [
+    {
+        id: "cthulhabbys",
+        title: "Українізатор для Cthulhu: The Cosmic Abyss",
+        img: "images/cthulhabbys.jpg",
+        desc: "Атмосферна пригодницька гра у жанрі лавкрафтіанського горору. Гравець занурюється у моторошний світ стародавніх богів і заборонених знань, де межа між реальністю та божевіллям поступово стирається. Досліджуючи темні глибини океану й покинуті локації, ви стикаєтеся з незбагненними істотами та розгадуєте таємниці, що не повинні були бути відкриті. Гра поєднує дослідження, головоломки та психологічний тиск, змушуючи сумніватися у власному розумі та прийнятих рішеннях. Атмосфера безвиході, тривожний саундтрек і напружений сюжет створюють відчуття постійної небезпеки, де кожен крок може наблизити до розкриття космічної істини — або остаточного занурення у безодню.",
+        categories: ["Оновлено 02.05.26", "Deepseek", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/t3BzGSBB#BTK4S6JvBmGlJmVGgb_hPw"
+    },
+    {
+        id: "norse",
+        title: "Українізатор для NORSE: Oath of Blood",
+        img: "images/norse.jpg",
+        desc: "Тактична RPG із покроковими боями, дія якої відбувається у Норвегії доби вікінгів. Ви граєте за Ґуннара, молодого воїна, який після вбивства свого батька й вигнання з рідної землі повинен відбудувати поселення, налагодити союзницькі стосунки та вести свій загін до помсти. У грі важливі стратегічне планування, розташування юнітів у бою та грамотне використання особливостей місцевості. Вам доведеться керувати ремісниками, фермерами й воїнами, розвивати селище, розподіляти ресурси та покращувати будівлі, щоб отримувати нових воїнів та спорядження. Рішення гравця впливають на історію, а сюжетна сага про честь, зраду й відновлення спадщини розгортається через поглиблені діалоги й завдання.",
+        categories: ["Оновлено 04.05.26", "Deepseek", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/12Y1WaTL#6uM1x2Vn-66NuK3n86bcbQ"
+    },
+            
+    {
+        id: "solas2",
+        title: "Українізатор для Solasta II",
+        img: "images/solas2.jpg",
+        desc: "Подовження тактичної рольової гри, що переносить гравців у фентезійний світ, натхненний настільними RPG. Гра робить акцент на покрокових боях, де важливу роль відіграють позиціонування, освітлення та взаємодія з оточенням. Ви керуєте загоном героїв, кожен з яких має унікальні здібності, класи та стиль гри, а всі рішення під час пригод впливають на розвиток історії та відносини між персонажами.Світ гри став більш відкритим і деталізованим, а сюжет — глибшим і варіативнішим. Особливу увагу приділено кооперативному режиму, що дозволяє проходити кампанію разом з друзями, відтворюючи атмосферу класичних настільних пригод у цифровому форматі.",
+        categories: ["Deepseek", "Машпер"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/w7JjVJCb#JXJOgcnla4HJGC7Pykzx-A"
+    },
+            
+    {
+        id: "ff2r",
+        title: "Українізатор для FATAL FRAME II (2): Crimson Butterfly REMAKE",
+        img: "images/ff2r.jpg",
+        desc: "Оновлена версія культового японського горору, що розповідає моторошну історію сестер-близнючок Міо та Маю, які потрапляють у покинуте село, сповнене темних таємниць і духів. Гравець досліджує атмосферні локації, розгадує загадки та стикається з привидами, використовуючи Камеру Обскура — єдину зброю, здатну протистояти надприродному. Основний акцент гри зроблено на психологічному жаху, напрузі та емоційній історії, що поступово розкривається через дослідження світу. Це одна з найвідоміших частин серії, яка вважається класикою жанру survival horror і досі вражає своєю глибиною та напруженням.",
+        categories: ["Deepseek", "Машпер"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/h3RxyAiS#dM3vA9lJ4XCrp0uYhzXY9A"
+    },
+            
+    {
+        id: "spire2",
+        title: "Українізатор для Slay the Spire 2",
+        img: "images/spire2.jpg",
+        desc: "Продовження популярної карткової рогалик-стратегії Slay the Spire, у якій гравці піднімаються загадковою вежею, борючись із ворогами за допомогою колоди карт. Кожна битва вимагає продуманої стратегії: потрібно правильно комбінувати атаки, захист і особливі здібності, щоб перемогти супротивників і вижити на шляху до вершини. У грі з’являються нові персонажі, карти, вороги та події, що робить кожне проходження унікальним. Покращена графіка, глибші механіки побудови колоди та випадково згенеровані маршрути зберігають дух оригіналу, але пропонують ще більше тактичних можливостей і викликів для гравців.",
+        categories: ["Deepseek", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/l2hBRbDC#lbLPPcHKGF9o7VF6D3wzeQ"
+    },
+            
+    {
+        id: "bolt40",
+        title: "Українізатор для Warhammer 40,000 Boltgun",
+        img: "images/bolt40.jpg",
+        desc: "Динамічний шутер від першої особи у всесвіті Warhammer 40,000, виконаний у стилі класичних ретро-ігор 90-х років. Гравець бере на себе роль космодесантника, який бореться з ордами хаосу, використовуючи потужну зброю, зокрема легендарний болтер. Гра поєднує швидкий темп боїв, піксельну графіку та атмосферу старих шутерів. Під час проходження гравець досліджує різні рівні, знищує демонів і ворогів Імперіуму, збирає зброю та покращення. Завдяки швидкому геймплею, яскравим вибухам і великій кількості ворогів гра створює відчуття безперервного бою та передає сувору атмосферу темного майбутнього всесвіту Warhammer.",
+        categories: ["Deepseek", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/tywx3bwB#c2tTuSWj3QczUbO8R79Gow"
+    },
+            
+    {
+        id: "ground2",
+        title: "Українізатор для Grounded 2",
+        img: "images/ground2.jpg",
+        desc: "Пригодницька гра на виживання, у якій гравці знову опиняються зменшеними до розміру мурах і змушені виживати у небезпечному світі звичайного подвір’я. Досліджуючи траву, калюжі та покинуті предмети, вони збирають ресурси, створюють інструменти, будують укриття та борються з комахами, які у такому масштабі стають справжніми монстрами. Гра пропонує як одиночне проходження, так і кооператив із друзями, де важливими є співпраця, стратегія та кмітливість. Розширений світ, нові істоти, покращена система крафту й будівництва роблять пригоди ще більш захопливими та небезпечними, а кожна експедиція у «мікросвіт» приносить нові відкриття.",
+        categories: ["Оновлено 15.04.26", "Grok", "Deepseek", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/N2QjCSKb#5GQfINtnGHaUIxUx2xakTw"
+    },
+            
+    {
+        id: "metaled",
+        title: "Українізатор для Metal Eden",
+        img: "images/metaled.jpg",
+        desc: "Динамічний екшен із елементами RPG, де гравці беруть на себе роль пілота бойового робота у постапокаліптичному світі, сповненому небезпечних механізмів та мутованих ворогів. Гра поєднує швидкі бої з дослідженням розбитих міст та пусток, де ресурси обмежені, а вибір зброї і тактики впливає на виживання. Гравець може налаштовувати свого меха, комбінуючи різні типи озброєння, броні та додаткових систем, створюючи унікальні комбінації для бою. Metal Eden робить акцент на складних боях, тактичному мисленні та свободі у підході до кожного бою, забезпечуючи гравцю повне занурення у механізований світ.",
+        categories: ["Deepseek", "Машпер"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/oqYCVIKb#ijJkhSsSSV1kNuUHxPF1tA"
+    },
+            
+    {
+        id: "ac6",
+        title: "Українізатор для Armored Core VI: Fires of Rubicon",
+        img: "images/ac6.jpg",
+        desc: "Науково-фантастичний екшен із серії mech-симуляторів, де гравці керують потужними бойовими роботами. Дія гри відбувається на планеті Рубікон, багатій на ресурс Фірам, який є предметом конфлікту між корпораціями та приватними військовими формуваннями. Гравець бере на себе роль пілота меха-найманця, виконує контракти, веде бої проти інших мехів, роботизованих ворожих сил і величезних механізованих ворогів, використовуючи широкий арсенал зброї та налаштовуючи свого робота під стиль бою. Геймплей поєднує швидкі, тактичні бої з глибокою системою кастомізації мехів.",
+        categories: ["Deepseek", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/N6hi2LTK#hI7oHtSBK-e7s7J2KFujsQ"
+    },
+            
+    {
+        id: "windr",
+        title: "Українізатор для Windrose",
+        img: "images/windr.jpg",
+        desc: "Гра з елементами виживання та відкритим світом, дія якої відбувається в альтернативній Епосі Піратства XVIII століття. Гравець бере на себе роль капітана, що кидає виклик легендарним піратам і занурюється в історію про зраду та помсту. У Windrose можна досліджувати процедурно згенеровані біоми, збирати ресурси, будувати укріплення і поселення, боротися з ворогами та шукати приховані таємниці й скарби. Windrose підтримує як одиночну гру, так і кооперативний режим на декількох гравців, дозволяючи разом із друзями вирушати у захопливу піратську пригоду. У грі також присутня система кастомізації кораблів і спорядження, численні підземелля та цікаві квести, що роблять світ живим і різноманітним.",
+        categories: ["Оновлено 30.04.26", "Deepseek", "Машпер"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/k2hw1LbQ#ZDTu30Jr95WBsBoOrpMM2Q"
+    },
+            
+    {
+        id: "styxb",
+        title: "Українізатор для Styx: Blades of Greed",
+        img: "images/styxb.jpg",
+        desc: "Тактична стелс-гра, де гравець керує хитрим гобліном на ім’я Стікс. Головний герой — майстер прихованого пересування, здатний непомітно пробиратися крізь охоронців, красти цінні предмети та використовувати різноманітні пастки, щоб досягти своїх цілей. Гра пропонує складні рівні з численними маршрутами, де уважність та стратегія важливіші за прямі бої. Сюжет гри розгортається у фантастичному світі, населеному гоблінами, ельфами та людьми, і зосереджений на місії Стікса — збагатитися, уникнути небезпек та маніпулювати оточенням. Гра відзначається унікальним поєднанням гумору, темної атмосфери та глибокої системи стелс-ігрових механік.",
+        categories: ["Deepseek", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/oqR2EIiL#ilmkSWLdjHESCoRJG27ccA"
+    },
+
+    {
+        id: "codev",
+        title: "Українізатор для Code Vein",
+        img: "images/codev.jpg",
+        desc: "Хардкорна екшн-RPG у постапокаліптичному світі, де кров є джерелом сили, прокляттям і єдиним способом вижити. Зруйнована реальність балансує на межі загибелі, а її мешканці — Безсмертні, приречені вічно битися з власною спрагою. Гравець — воїн, що блукає серед руїн колишньої цивілізації, де кожна перемога дається ціною болю, а кожна поразка — крок до втрати людяності. Тут важливо не просто рубати ворогів, а керувати кров’ю як ресурсом: обирати здібності, стилі бою та шляхи розвитку, що визначають, ким ти станеш — захисником, хижаком чи чудовиськом.",
+        categories: ["Grok", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/hvJHhQwK#J-tAbGc6J1JJvpcEhWp9ZQ"
+    },
+            
+    {
+        id: "eriksh",
+        title: "Українізатор для Eriksholm: The Stolen Dream",
+        img: "images/eriksh.jpg",
+        desc: "Пригода, де межа між сном і реальністю розмита, а кошмари стають суворим законом. У містечку Еріксгольм заблукала свідомість людей перетворює звичне життя на лабіринт страху та таємних бажань. Гравець опиняється в центрі містичного полону, де минуле і майбутнє змішано у хаотичну павутину, а боротьба за збереження власної ідентичності стає ритуалом виживання. Тут не достатньо ховатися або боротися: потрібно розпізнавати знаки, впливати на сни ворогів і перетворювати їхні кошмари на власні союзні сили.",
+        categories: ["Grok", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/YiZQXLyD#cQLWrlFcoXO2lAJ5v8AugA"
+    },
+            
+    {
+        id: "crisol",
+        title: "Українізатор для Crisol: Theater of Idols",
+        img: "images/crisol.jpg",
+        desc: "Жорстока екшн-пригода з елементами горору та чорного символізму, де культ віри, крові й фанатизму перетворює реальність на моторошну виставу. Гра занурює гравця у викривлений світ, де ідоли не рятують, а пожирають, а кожен крок сценою може стати останнім актом. Гравець опиняється в серці зловісного театру, де виживання — не головна мета, а лише побічний ефект правильного вибору. Тут потрібно не просто битися, а читати ритуали, ламати культові догми й використовувати саму віру ворогів проти них. Кожна сутичка — це баланс між фанатичною люттю та холодним розрахунком, між прямим опором і символічною жертвою.",
+        categories: ["Grok", "Машпер"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/5iAUxJrB#YIltcN7Akdc17crMGW1bsg"
+    },
+            
+    {
+        id: "carmag",
+        title: "Українізатор для Carmageddon: Rogue Shift",
+        img: "images/carmag.jpg",
+        desc: "Аркадна гонка з безжальним характером, чорним гумором і культом хаосу на кожному повороті. Carmageddon: Rogue Shift переносить гравця у викривлений світ майбутнього, де швидкість і руйнування — єдина валюта успіху, а правила існують лише для того, щоб їх порушувати. Гравець стає учасником смертельно небезпечного турніру, у якому мета не просто дістатися фінішу, а домінувати будь-якою ціною: таранячи суперників, використовуючи абсурдну зброю та змінюючи саме середовище траси на свою користь. Кожна гонка — це вибір між ризиком і обережністю, між прямим зіткненням і підступною тактикою.",
+        categories: ["Grok", "Машпер"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/c3gRyaxY#bugxs2b-DqrfhnaoCQwiLw"
+    },
+
+    {
+        id: "starr",
+        title: "Українізатор для StarRupture",
+        img: "images/starr.jpg",
+        desc: "Науково-фантастична гра на виживання з відкритим світом, що поєднує дослідження, будівництво та бойові зіткнення. Гравець опиняється на ворожій планеті з екстремальними умовами, агресивною фауною та періодичними катаклізмами, спричиненими активністю зорі, які змінюють довкілля й змушують постійно адаптуватися. Ігролад зосереджений на видобутку ресурсів, зведенні та автоматизації виробничих комплексів, розвитку технологій і захисті бази від нападів. Гру можна проходити як наодинці, так і в кооперативі, розподіляючи ролі між дослідженням, виробництвом і обороною.",
+        categories: ["Оновлено 10.04.26", "Deepseek", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/g2AhhSrQ#wwVgmxc20RNFxslYcrEgbw"
+    },
+
+    {
+        id: "stillwak",
+        title: "Українізатор для Still Wakes the Deep",
+        img: "images/stillwak.jpg",
+        desc: "Атмосферна психологічна гра жахів від першої особи, події якої розгортаються на ізольованій нафтовій платформі посеред холодного Північного моря. Після загадкової катастрофи герой опиняється в пастці серед руйнувань, шторму та невідомої загрози, що поступово охоплює платформу. Ігролад зосереджений на дослідженні, напруженому виживанні та оповідному досвіді без бойових дій. Гравець пересувається небезпечними локаціями, уникає смертельної небезпеки, розв’язує прості взаємодійні завдання й занурюється в похмуру історію, де головну роль відіграють атмосфера, звук і відчуття постійної тривоги.",
+        categories: ["Grok", "DeepL", "Машпер"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/kuZHxLTI#CLNq9mzjeMZNz_3I-TqytA"
+    },
+
+    {
+        id: "flintl",
+        title: "Українізатор для Flintlock: The Siege of Dawn",
+        img: "images/flintl.jpg",
+        desc: "Динамічна рольова гра від третьої особи в епічному фентезійному світі, де магія і вогнепальна зброя поєднуються у масштабних битвах. Гравець опиняється в обложеному королівстві, де війни та надприродні загрози ставлять під загрозу долю всього континенту. Ігролад поєднує швидкі бої з використанням мушкетів, магії та тактичних комбінацій здібностей. Гравець може розвивати унікальний стиль ведення бою, вдосконалювати спорядження та відкривати нові вміння.",
+        categories: ["Grok", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/FyRDFSzY#IRtxvgjWgHgW0VoEiwm9vA"
+    },
+
+    {
+        id: "ever2",
+        title: "Українізатор для Everspace 2",
+        img: "images/ever2.jpg",
+        desc: "Динамічна космічна рольова гра з видом від третьої особи, що поєднує дослідження галактики, стрілянину та розвиток персонажа. Гравець стає пілотом у відкритому космосі, де чекають небезпечні зоряні системи, піратські напади та загадкові технології древніх цивілізацій. Ігролад зосереджений на космічних боях у реальному часі, покращенні корабля та зброї, торгівлі й виконанні сюжетних і побічних завдань. Гравець досліджує різноманітні планети й станції, збирає ресурси та взаємодіє з фракціями, що впливають на розвиток подій.",
+        categories: ["Grok", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/dzIBVYTR#E-c1KPHOP6VMw5XTQkZQHQ"
+    },
+
+    {
+        id: "routi",
+        title: "Українізатор для Routine",
+        img: "images/routi.jpg",
+        desc: "Атмосферна науково-фантастична хорор-гра від першої особи, натхненна ретрофутуристичною естетикою 1980-х років. Гравець опиняється на покинутій місячній станції, де тиша, порожні коридори та зламані системи створюють постійне відчуття ізоляції й загрози. Ігролад зосереджений на дослідженні станції, взаємодії з оточенням і виживанні без надмірної кількості бойових сутичок. Гравець використовує інструменти та обмежені ресурси, щоб уникати небезпечних роботів і розкривати доступ до нових секторів.",
+        categories: ["Grok", "Машпер"],
+        quality: 15,
+        patchLink: "https://mega.nz/folder/tioEnBSJ#QEiYhi05-8imfwgJ_twjjQ"
+    },
+
+    {
+        id: "sleepa",
+        title: "Українізатор для SLEEP AWAKE",
+        img: "images/sleepa.jpg",
+        desc: "Психологічна горор-гра від першої особи з виразним сюрреалістичним стилем. Гравець опиняється у викривленому світі між сном і реальністю, де знайомі простори перетворюються на тривожні лабіринти, а власна свідомість стає головною загрозою. Ігролад зосереджений на дослідженні символічних локацій, спостереженні та униканні небезпек, а також поступовому розкритті історії через візуальні образи й атмосферні події. Гравець взаємодіє з оточенням, розгадує абстрактні головоломки та переживає зміни перспективи, що впливають на сприйняття світу.",
+        categories: ["Grok", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/V75HlT5S#llZeelevuGNjdODVRBVRMw"
+    },
+
+    {
+        id: "aila",
+        title: "Українізатор для A.I.L.A",
+        img: "images/aila.jpg",
+        desc: "Атмосферна науково-фантастична гра від першої особи з елементами психологічного жаху та трилера. Гравець опиняється в ізольованому технологічному комплексі, де експериментальна система штучного інтелекту вийшла з-під контролю, а межа між реальністю та ілюзією поступово стирається. Ігролад зосереджений на дослідженні закритих приміщень, взаємодії з високотехнологічними пристроями та розв’язанні головоломок. Гравець має уникати небезпек, аналізувати поведінку A.I.L.A та робити вибір, який впливає на розвиток подій.",
+        categories: ["Grok", "Машпер"],
+        quality: 20,
+        patchLink: "https://mega.nz/folder/t75ExQJR#TB15znR3JLB-Vcp_j8bazA"
+    },
+
+    {
+        id: "dreadz",
+        title: "Українізатор для DREADZONE",
+        img: "images/dreadz.jpg",
+        desc: "Напружена гра у жанрі виживання від першої особи з елементами психологічного жаху. Гравець опиняється в забороненій ізольованій зоні, де занедбані об’єкти, спотворена реальність і невідомі загрози створюють постійне відчуття страху та небезпеки. Ігролад будується на дослідженні похмурих локацій, зборі ресурсів і виживанні в умовах обмежених можливостей. Гравець змушений уникати небезпечних істот, використовувати імпровізовані інструменти та уважно стежити за психічним станом персонажа.",
+        categories: ["Grok", "Машпер"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/E64BSTrI#uW6XshoW_K_W71SNAsUfhw"
+    },
+
+    {
+        id: "blood2",
+        title: "Українізатор для Vampire: The Masquerade - Bloodlines 2",
+        img: "images/blood2.jpg",
+        desc: "Рольова гра від першої особи в похмурому сучасному світі темного фентезі. Гравець бере на себе роль новонародженого вампіра в місті Сіетл, де приховане суспільство нічних істот живе за суворими правилами Маскараду, а боротьба за владу між кланами визначає долю міста. Ігролад поєднує нелінійні діалоги, дослідження міських районів та динамічні сутички з використанням надприродних здібностей. Вибір клану відкриває унікальні вміння й стилі проходження, дозволяючи діяти силою, маніпуляціями або прихованістю.",
+        categories: ["Grok", "Машред"],
+        quality: 20,
+        patchLink: "https://mega.nz/folder/VipDCAQD#LEhZs90yxEVBFS1Vzru2zg"
+    },
+
+    {
+        id: "etstrands",
+        title: "Українізатор для Eternal Strands",
+        img: "images/etstrands.jpg",
+        desc: "Пригодницька рольова гра від третьої особи у фентезійному світі, сповненому магії та давніх таємниць. Гравець вирушає в подорож зруйнованими землями, де залишки колись величної цивілізації переплітаються з небезпечними істотами та неконтрольованими магічними силами. Ігролад зосереджений на динамічних боях із гігантськими ворогами, взаємодії з оточенням та використанні магії, що впливає на фізику світу. Гравець може керувати стихіями, комбінувати здібності та тактично використовувати середовище для подолання перешкод і супротивників.",
+        categories: ["Grok", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/NvAwRDBJ#y9varp8C-0Q2eCEqPRC4sw"
+    },
+            
+     {
+        id: "alirr",
+        title: "Українізатор для Alien: Rogue Incursion Evolved Edition",
+        img: "images/alirr.jpg",
+        desc: "Напружена пригодницька гра від першої особи в культовому науково-фантастичному всесвіті Alien. Гравець опиняється на ізольованому космічному комплексі, де кожен крок супроводжується постійною загрозою з боку ксеноморфів, а виживання залежить від уважності, швидкої реакції та обмежених ресурсів. Ігролад поєднує дослідження темних коридорів, тактичні сутички та елементи виживання. Гравець використовує футуристичну зброю, інструменти та сканери, щоб уникати смертельних істот або знищувати їх, поступово відкриваючи нові зони станції.",
+        categories: ["Grok", "Машпер"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/IyhkzbRR#QY84XDAHqTGJsDwyXQwmrA"
+    },
+
+    {
+        id: "entro",
+        title: "Українізатор для The Entropy Centre",
+        img: "images/entro.jpg",
+        desc: "Логічна гра-головоломка від першої особи в науково-фантастичному світі. Гравець опиняється в ізольованому космічному об’єкті, де потрібно маніпулювати часом і гравітацією, щоб розв’язувати складні задачі та просуватися крізь лабіринти технологічної станції. Ігролад будується на використанні механіки «реверсії часу» для предметів і елементів середовища, що дозволяє вирішувати головоломки різними способами. Поступово відкриваються нові зони та технології, а сюжет розкриває таємниці станції та долю її мешканців.",
+        categories: ["Grok", "Машпер"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/FjwwxTZQ#YJ1dP1A_hPyfx8TfZjVRSA"
+    },
+
+    {
+        id: "voidb",
+        title: "Українізатор для VOID/BREAKER",
+        img: "images/voidb.jpg",
+        desc: "Динамічний екшн із елементами roguelite та футуристичним сеттингом, де гравець опиняється у хаотичному світі, сповненому небезпечних ворогів і руйнувань. Дія гри відбувається в постапокаліптичній урбаністичній зоні з інтенсивними битвами та швидким темпом. Ігролад поєднує блискавичні бої в реальному часі, використання комбо та унікальних здібностей персонажа, а також дослідження процедурно згенерованих локацій. Гравець може покращувати спорядження, експериментувати зі стилями бою та адаптуватися до постійно змінюваних викликів світу VOID/BREAKER.",
+        categories: ["Grok", "Машпер"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/xnwDWRgQ#l_lA_2ZqDY2ZRTxfANxIxA"
+    },
+
+    {
+        id: "echoed",
+        title: "Українізатор для Echoes of the End",
+        img: "images/echoed.jpg",
+        desc: "Сюжетна пригодницька екшн-гра від третьої особи у фентезійному світі, натхненному північними мотивами. Історія зосереджена на особистій драмі героїв, магії та загрозі масштабного конфлікту, що поступово розкривається через подорожі й діалоги. Ігролад поєднує кінематографічні бої, використання магічних здібностей і дослідження напіввідкритих локацій. Гравець взаємодіє з оточенням, розв’язує ситуаційні завдання та поступово відкриває нові вміння, які впливають як на сутички, так і на перебіг сюжету.",
+        categories: ["Grok", "Машред"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/l2QRkQ4Z#OJvPYPQLRKfWaLX5tafRpg"
+    },
+
+    {
+        id: "robo",
+        title: "Українізатор для RoboCop: Rogue City",
+        img: "images/robo.jpg",
+        desc: "Сюжетний шутер від першої особи, дія якого відбувається у похмурому, злочинному Детройті між подіями фільмів RoboCop 2 та RoboCop 3. Гравець бере на себе роль РобоКопа — кіборга-поліцейського, що стоїть на сторожі закону у світі корпоративної жадібності та вуличного насильства. Ігролад поєднує методичні перестрілки з важким відчуттям руху, використання культової зброї Auto-9 і поліцейських інструментів, а також дослідження локацій і діалоги з вибором рішень. Виконуючи завдання, гравець дотримується Основних директив, розслідує злочини, ухвалює моральні рішення та впливає на перебіг історії.",
+        categories: ["Grok", "DeepL", "Машред"],
+        quality: 80,
+        patchLink: "https://mega.nz/folder/Jqw23QIQ#B4O4oVZqdCA3o5K7S4YDLA"
+    },
+
+    {
+        id: "robounf",
+        title: "Українізатор для RoboCop: Rogue City - Unfinished Business",
+        img: "images/robounf.jpg",
+        desc: "Самостійне сюжетне доповнення до RoboCop: Rogue City, що продовжує історію легендарного кіборг-поліцейського у похмурому, корумпованому Детройті. Гравець знову бере на себе роль РобоКопа, розслідуючи нові злочини, пов’язані з корпораціями, бандами та незавершеними справами минулого. Ігролад зберігає акцент на повільному, важкому бойовому стилі з використанням фірмової зброї, зокрема Auto-9, а також на виборі рішень у діалогах. Гравець патрулює райони, виконує поліцейські завдання, ухвалює рішення згідно з Основними директивами та поступово розкриває нову сюжетну лінію, що поглиблює образ РобоКопа й світу гри.",
+        categories: ["Grok", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/hqwECDyJ#3ehfcKJqDG8J8ef9Dl4j1w"
+    },
+
+    {
+        id: "hypbreak",
+        title: "Українізатор для Hyper Light Breaker",
+        img: "images/hypbreak.jpg",
+        desc: "Динамічний екшн-RPG з відкритими локаціями у стилі roguelite, події якої розгортаються у всесвіті Hyper Light. Світ гри сповнений яскравих кольорів, абстрактних форм і фрагментованої історії, що подається через оточення та візуальні образи. Ігролад поєднує швидкісний бій у реальному часі, дослідження процедурно змінюваних зон і розвиток персонажа. Гравець використовує холодну та вогнепальну зброю, ривки й паркур, здобуває спорядження та покращення, а також може проходити гру наодинці або в кооперативі.",
+        categories: ["DeepL", "ChatGPT", "Машред"],
+        quality: 90,
+        patchLink: "https://mega.nz/folder/Jqw23QIQ#B4O4oVZqdCA3o5K7S4YDLA"
+    },
+
+    {
+        id: "enotr",
+        title: "Українізатор для Enotria: The Last Song",
+        img: "images/enotr.jpg",
+        desc: "Хардкорна рольова гра в стилі soulslike, натхненна італійським фольклором і сонячною естетикою Середземномор’я. Події розгортаються у світі, застиглому в нескінченній виставі, де маски визначають ролі, здібності та саму долю персонажів. Ігролад будується на динамічних боях, точному таймінгу й гнучкій системі білдів. Гравець змінює маски та ролі просто під час гри, комбінує навички, експериментує зі стилями бою й досліджує напіввідкриті локації, поступово розкриваючи таємниці світу Enotria.",
+        categories: ["Grok", "DeepL", "Машпер"],
+        quality: 5,
+        patchLink: "https://mega.nz/folder/8jpAGAZI#-m3nohMOxjVB-OTmfzSm0A"
+    },
+
+    {
+        id: "thauma",
+        title: "Українізатор для The Thaumaturge",
+        img: "images/thauma.jpg",
+        desc: "Сюжетна рольова гра з ізометричним оглядом, дія якої відбувається у Варшаві початку ХХ століття в альтернативній версії реальності. Світ гри поєднує історичне тло з містикою: герой, тауматург, здатен взаємодіяти з надприродними істотами та прихованими сторонами людської душі. Ігролад зосереджений на розслідуваннях, діалогах і тактичних покрокових боях. Гравець вивчає слабкості персонажів, ухвалює морально неоднозначні рішення, впливає на розвиток сюжету та використовує сили салюторів у сутичках, де важливі стратегія й підготовка.",
+        categories: ["DeepL", "ChatGPT", "Машред"],
+        quality: 10,
+        patchLink: "https://mega.nz/folder/R6gQmRqY#dJ9pD1eEOlnbw-dcQYdIXA"
+    }
+];
+
+        let selectedTranslation = "all";
+
+        function createCard(game, index) {
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            card.style.animationDelay = `${150 + index * 100}ms`;
+
+            let tagsHTML = game.categories.map(cat => `<span class="tag">${cat}</span>`).join('');
+
+            card.innerHTML = `
+                <img src="${game.img}" alt="${game.title}">
+                <div class="game-info">
+                    <h3>${game.title}</h3>
+                    <div>${tagsHTML}</div>
+                    <div class="progress-container">
+                        <div class="progress-label">Якість редагування: ${game.quality}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${game.quality}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            card.onclick = () => { showModal(game); history.replaceState(null, null, '#' + game.id); };
+            return card;
+        }
+
+        function showModal(game) {
+            const modalBody = document.getElementById('modal-body');
+            let tagsHTML = game.categories.map(cat => `<span class="tag">${cat}</span>`).join('');
+
+            modalBody.innerHTML = `
+                <div class="modal-img"><img src="${game.img}" alt="${game.title}"></div>
+                <div class="modal-info">
+                    <h2>${game.title}</h2>
+                    <p>${game.desc}</p>
+                    <div style="margin:15px 0;">${tagsHTML}</div>
+                    <div class="progress-container" style="margin:20px 0;">
+                        <div class="progress-label">Якість редагування: ${game.quality}%</div>
+                        <div class="progress-bar" style="height:12px;">
+                            <div class="progress-fill" style="width:${game.quality}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 25px;">
+                        <button class="download-btn" onclick="window.open('${game.patchLink}','_blank')">📥 Завантажити</button>
+                        <button class="back-btn" onclick="closeModalAndGoHome()">← Усі ігри</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Нова функція: закрити модалку + повернутися на головну з плавним скролом
+        function closeModalAndGoHome() {
+            closeModal();
+            setTimeout(() => {
+                window.scrollTo({ 
+                    top: 0, 
+                    behavior: 'smooth' 
+                });
+                history.replaceState(null, null, window.location.pathname);
+            }, 300);
+        }
+
+        function applyFilters() {
+            const term = document.querySelector('.search').value.toLowerCase().trim();
+
+            document.querySelectorAll('.game-card').forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const game = games.find(g => g.title === card.querySelector('h3').textContent);
+
+                const matchesSearch = !term || title.includes(term);
+                const hasTranslation = selectedTranslation === "all" || game.categories.includes(selectedTranslation);
+
+                card.style.display = (matchesSearch && hasTranslation) ? 'block' : 'none';
+            });
+        }
+
+        function initFilters() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-filter="translation"]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedTranslation = btn.getAttribute('data-value');
+                    applyFilters();
+                });
+            });
+        }
+
+        function goToHome() {
+            const logo = document.querySelector('.logo');
+            logo.classList.add('logo-click');
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                history.replaceState(null, null, window.location.pathname);
+                logo.classList.remove('logo-click');
+            }, 450);
+        }
+
+        function openFromHash() {
+            const hash = window.location.hash.substring(1);
+            if (!hash) return;
+            const game = games.find(g => g.id === hash);
+            if (game) setTimeout(() => showModal(game), 500);
+        }
+
+        window.onload = () => {
+            const grid = document.getElementById('games-grid');
+            games.forEach((game, i) => grid.appendChild(createCard(game, i)));
+
+            initFilters();
+            openFromHash();
+            window.addEventListener('hashchange', openFromHash);
+        };
+
+        document.getElementById('modal').addEventListener('click', e => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+    </script>
+</body>
+</html>
