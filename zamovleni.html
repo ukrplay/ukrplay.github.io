@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0a1428">
+    <title>Замовлені ігри — UkrPlay</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+    <style>
+        :root {
+            --bg: #0a1428;
+            --card: rgba(20, 35, 70, 0.75);
+            --accent: #ffcc00;
+            --blue: #0099ff;
+            --lightblue: #00ccff;
+            --green: #00cc66;
+            --red: #ff4444;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: #e0f0ff;
+            line-height: 1.6;
+            background-image:
+                linear-gradient(rgba(0,20,60,0.85), rgba(10,20,40,0.95)),
+                url('images/back.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: var(--safe-bottom);
+        }
+        @media (max-width: 900px) {
+            body { background-attachment: scroll; } /* фіксований фон гальмує на мобільних */
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: rgba(5,15,40,0.92);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,204,0,0.25);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding-top: var(--safe-top);
+            padding-left: var(--safe-left);
+            padding-right: var(--safe-right);
+        }
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem clamp(1rem, 4vw, 1.5rem);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .logo {
+            font-size: clamp(1.5rem, 5vw, 2.05rem);
+            font-weight: bold;
+            color: #ffffff;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        .logo:hover { opacity: 0.9; }
+        .nav-back {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            border: 1px solid rgba(255,204,0,0.25);
+            padding: 10px clamp(14px, 3.5vw, 20px);
+            border-radius: 50px;
+            font-size: clamp(0.82rem, 2.6vw, 0.95rem);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .nav-back:hover {
+            background: var(--accent);
+            color: #002b5e;
+            transform: translateY(-2px);
+            box-shadow: 0 0 18px rgba(255,204,0,0.5);
+        }
+        .nav-back:active { transform: translateY(0) scale(0.97); }
+
+        /* ===== HERO ===== */
+        .hero {
+            padding: clamp(1.2rem, 4vw, 1.8rem) clamp(1rem, 4vw, 1.5rem) 1.2rem;
+            background: linear-gradient(rgba(0,20,60,0.82), rgba(0,40,100,0.9));
+            position: relative;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('images/hero.jpg') center/cover;
+            filter: brightness(0.55);
+            z-index: -1;
+        }
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.8rem;
+        }
+        .hero-left {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.7rem, 3vw, 1rem);
+        }
+        .hero-logo {
+            width: clamp(50px, 13vw, 70px);
+            height: clamp(50px, 13vw, 70px);
+            border-radius: 50%;
+            border: 3px solid #ffcc00;
+            box-shadow: 0 0 20px rgba(255,204,0,0.4);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .hero-text { text-align: left; min-width: 0; }
+        .hero-text h1 {
+            font-size: clamp(1.25rem, 4.5vw, 1.9rem);
+            color: var(--accent);
+            text-shadow: 0 2px 12px rgba(0,0,0,0.7), 0 0 8px #ffcc00;
+            line-height: 1.15;
+        }
+        .hero-text p {
+            font-size: clamp(0.82rem, 2.6vw, 1rem);
+            color: var(--lightblue);
+            margin: 0;
+        }
+
+        /* ===== WRAP ===== */
+        .wrap {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 clamp(1rem, 4vw, 1.5rem) 3rem;
+            padding-left: max(clamp(1rem, 4vw, 1.5rem), var(--safe-left));
+            padding-right: max(clamp(1rem, 4vw, 1.5rem), var(--safe-right));
+        }
+
+        /* ===== STATS ===== */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.6rem;
+            margin-bottom: 1.3rem;
+        }
+        .stat {
+            background: rgba(0,0,0,0.4);
+            padding: 8px 12px;
+            border-radius: 50px;
+            font-size: clamp(0.78rem, 2.4vw, 0.9rem);
+            border: 1px solid rgba(255,204,0,0.2);
+            white-space: nowrap;
+            text-align: center;
+        }
+        .stat b { color: var(--accent); }
+
+        /* ===== FILTERS ===== */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.3rem;
+        }
+        .filter-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            padding: 10px clamp(14px, 3.5vw, 18px);
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: clamp(0.85rem, 2.6vw, 0.98rem);
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            min-height: 42px;
+            font-family: inherit;
+        }
+        .filter-btn:hover { background: rgba(255,255,255,0.2); }
+        .filter-btn:active { transform: scale(0.96); }
+        .filter-btn.active {
+            background: var(--accent);
+            color: #002b5e;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255,204,0,0.6);
+        }
+
+        /* ===== LIST ===== */
+        .list { display: flex; flex-direction: column; gap: 10px; }
+        .item {
+            background: var(--card);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,204,0,0.25);
+            border-radius: 16px;
+            padding: clamp(12px, 3vw, 15px) clamp(14px, 3.5vw, 20px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            opacity: 0;
+            animation: fadeInUp 0.5s forwards;
+        }
+        .item:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 0 30px rgba(255,204,0,0.3), 0 20px 40px rgba(0,153,255,0.25);
+            border-color: rgba(255,204,0,0.6);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .item-name {
+            font-size: clamp(0.9rem, 2.7vw, 1.02rem);
+            font-weight: 600;
+            flex: 1 1 200px;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            min-width: 0;
+        }
+        .item-num {
+            color: #88aaff;
+            font-size: 0.85em;
+            margin-right: 6px;
+        }
+        .badge {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: clamp(0.72rem, 2.3vw, 0.82rem);
+            font-weight: bold;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .badge.done {
+            background: rgba(0,204,102,0.18);
+            color: var(--green);
+            border: 1px solid var(--green);
+        }
+        .badge.todo {
+            background: rgba(255,68,68,0.15);
+            color: var(--red);
+            border: 1px solid var(--red);
+        }
+        .empty {
+            text-align: center;
+            padding: 40px 16px;
+            color: #88aaff;
+            font-size: 0.95rem;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: rgba(5,15,40,0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 22px 16px;
+            padding-bottom: calc(22px + var(--safe-bottom));
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255,204,0,0.25);
+        }
+        .footer p { color: #88aaff; font-size: 0.8rem; }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 640px) {
+            .hero-content { flex-direction: row; }
+            .hero-text { text-align: left; }
+            .item { align-items: flex-start; }
+            .badge { margin-left: auto; }
+        }
+        @media (max-width: 420px) {
+            .nav { padding: 0.65rem 0.85rem; }
+            .nav-back { padding: 8px 14px; }
+            .filters { gap: 0.4rem; }
+            .filter-btn { padding: 9px 12px; flex: 1 1 auto; }
+            .item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .badge {
+                align-self: flex-start;
+                margin-left: 0;
+            }
+            .stats { grid-template-columns: 1fr 1fr; }
+            .stat:first-child { grid-column: 1 / -1; }
+        }
+        @media (max-width: 340px) {
+            .logo { font-size: 1.35rem; }
+            .nav-back { font-size: 0.78rem; padding: 7px 11px; }
+            .stat { font-size: 0.72rem; padding: 6px 8px; }
+        }
+
+        /* Повага до налаштувань доступності */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .item { opacity: 1; }
+        }
+
+        /* Підтримка темної/світлої теми ОС — залишаємо темну, але фіксуємо color-scheme */
+        :root { color-scheme: dark; }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <div class="nav">
+            <a href="index.html" class="logo">UkrPlay</a>
+            <a href="index.html" class="nav-back">← На головну</a>
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-left">
+                <img src="logo.png" alt="Logo" class="hero-logo"
+                     onerror="this.src='https://placehold.co/200x200/0a1428/ffcc00?text=U'">
+                <div class="hero-text">
+                    <h1>Замовлені ігри</h1>
+                    <p>Список ігор на машинний переклад</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTENT ===== -->
+    <div class="wrap">
+        <div class="stats" id="stats"></div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">Всі</button>
+            <button class="filter-btn" data-filter="done">✅ Зроблено</button>
+            <button class="filter-btn" data-filter="todo">⏳ Не зроблено</button>
+        </div>
+
+        <div class="list" id="list"></div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p>© 2024-2026 UkrPlay — Українізатори ігор</p>
+    </footer>
+
+    <script>
+        const games = [
+            { name: "Final Fantasy XVI", done: false },
+            { name: "Trails in the Sky 1st Chapter (ремейк)", done: false },
+            { name: "Gungrave G.O.R.E", done: false },
+            { name: "METAL GEAR SOLID 4 Guns of the Patriots - Master Collection Version", done: false },
+            { name: "Mediterranea Inferno", done: false },
+            { name: "Dead Rising 2", done: false },
+            { name: "Dragon Age™: The Veilguard", done: false },
+            { name: "Atelier Ryza 2: Lost Legends & the Secret Fairy DX", done: false },
+            { name: "Monster Hunter Wilds", done: false },
+            { name: "The Last Case of Benedict Fox Definitive Edition", done: false },
+            { name: "Gotham Knights", done: false },
+            { name: "AD Infinitum", done: false },
+            { name: "DAEMON X MACHINA", done: false },
+            { name: "Gears of War E-day", done: false },
+            { name: "Yakuza 0 Director's cut", done: false },
+            { name: "Yakuza Kiwami", done: false },
+            { name: "Nivalis Nights", done: false },
+            { name: "Call of Duty: Ghost", done: false },
+            { name: "Cloudpunk", done: false },
+            { name: "Warhammer 40,000: Mechanicus", done: false },
+            { name: "The Big Con", done: false }
+        ];
+
+        let currentFilter = "all";
+
+        function escapeHtml(t) {
+            const d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
+        }
+
+        function render() {
+            const list = document.getElementById('list');
+            const filtered = games.filter(g => {
+                if (currentFilter === "done") return g.done;
+                if (currentFilter === "todo") return !g.done;
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty">🔍 Нічого не знайдено</div>';
+            } else {
+                list.innerHTML = filtered.map((g, i) => {
+                    const originalIndex = games.indexOf(g) + 1;
+                    const badge = g.done
+                        ? '<span class="badge done">✅ Зроблено</span>'
+                        : '<span class="badge todo">⏳ Не зроблено</span>';
+                    return `
+                        <div class="item" style="animation-delay:${i * 40}ms">
+                            <div class="item-name">
+                                <span class="item-num">${originalIndex}.</span>${escapeHtml(g.name)}
+                            </div>
+                            ${badge}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const total = games.length;
+            const done = games.filter(g => g.done).length;
+            const todo = total - done;
+            document.getElementById('stats').innerHTML = `
+                <div class="stat">Всього: <b>${total}</b></div>
+                <div class="stat">✅ Зроблено: <b>${done}</b></div>
+                <div class="stat">⏳ Не зроблено: <b>${todo}</b></div>
+            `;
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-filter');
+                render();
+            });
+        });
+
+        render();
+    </script>
+</body>
+</html>
