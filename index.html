@@ -1,0 +1,3315 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="google-site-verification" content="nzQj2xGdQmcjNdkb7C-c_WhR6F7RKy_tW2y6L_GNDEY" />
+    <meta name="google-site-verification" content="slxd42MLGDM-ekgNSsRKpqEiS5TJWykS9bVcIbZmJBM" />
+    <meta name="description" content="UkrPlay — сайт з українськими перекладами ігор за допомогою ШІ">
+    <meta name="theme-color" content="#070e1c">
+    <title>UkrPlay — Ігри українською</title>
+    <link rel="canonical" href="https://ukrplay.github.io/">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
+
+    <!-- ===== PWA НАЛАШТУВАННЯ ===== -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="UkrPlay">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <style>
+        :root {
+            --bg: #070e1c;
+            --bg-2: #0a1428;
+            --card: rgba(18, 32, 64, 0.65);
+            --accent: #ffcc00;
+            --accent-2: #ffaa00;
+            --blue: #0099ff;
+            --lightblue: #00ccff;
+            --green: #00cc66;
+            --red: #ff4444;
+            --text: #e0f0ff;
+            --text-dim: #88aaff;
+            --border: rgba(255, 204, 0, 0.18);
+            --border-hover: rgba(255, 204, 0, 0.5);
+            --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.45);
+            --shadow-glow: 0 0 40px rgba(255, 204, 0, 0.35);
+            --radius: 20px;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            background-image:
+                radial-gradient(ellipse at 20% 0%, rgba(0, 80, 180, 0.35), transparent 55%),
+                radial-gradient(ellipse at 80% 100%, rgba(255, 180, 0, 0.12), transparent 50%),
+                linear-gradient(rgba(0, 15, 45, 0.9), rgba(7, 14, 28, 0.98)),
+                url('images/back.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: var(--safe-bottom);
+        }
+        @media (max-width: 900px) {
+            body { background-attachment: scroll; }
+        }
+
+        /* ===== АНІМАЦІЇ ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.92) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes logoClick {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.18) rotate(10deg); }
+            70% { transform: scale(0.92) rotate(-6deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+        @keyframes shine {
+            0%   { transform: translateX(-150%) skewX(-25deg); }
+            20%  { transform: translateX(300%) skewX(-25deg); }
+            100% { transform: translateX(300%) skewX(-25deg); }
+        }
+        @keyframes commentSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.4); }
+            50% { box-shadow: 0 0 0 12px rgba(255, 204, 0, 0); }
+        }
+        @keyframes chatPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 6px 22px rgba(255, 204, 0, 0.45); }
+            50% { transform: scale(1.05); box-shadow: 0 10px 32px rgba(255, 204, 0, 0.7); }
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: rgba(5, 12, 30, 0.75);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            padding-top: var(--safe-top);
+            padding-left: var(--safe-left);
+            padding-right: var(--safe-right);
+        }
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.65rem clamp(0.85rem, 4vw, 1.5rem);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .logo {
+            font-size: clamp(1.45rem, 4.8vw, 2.1rem);
+            font-weight: 800;
+            color: #fff;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            flex-shrink: 0;
+        }
+        .logo span { color: #fff; }
+        .logo:hover { opacity: 0.85; }
+        .logo-click { animation: logoClick 0.45s ease forwards; }
+
+        .search {
+            flex: 1 1 auto;
+            max-width: 420px;
+            min-width: 0;
+            margin: 0 0.4rem;
+            padding: 11px 18px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            color: #fff;
+            font-size: clamp(0.86rem, 2.6vw, 1rem);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            font-family: inherit;
+        }
+        .search::placeholder { color: rgba(200, 220, 255, 0.5); }
+        .search:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.18);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            padding: clamp(1.3rem, 4vw, 2.2rem) clamp(1rem, 4vw, 1.5rem) 1.2rem;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255, 204, 0, 0.08);
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('images/hero.jpg') center/cover;
+            filter: brightness(0.4) saturate(0.8);
+            z-index: -2;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(7, 14, 28, 0.5) 0%, rgba(7, 14, 28, 0.95) 100%);
+            z-index: -1;
+        }
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.6rem;
+        }
+        .hero-left {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.6rem, 3vw, 1.1rem);
+        }
+        .hero-logo {
+            width: clamp(50px, 12vw, 78px);
+            height: clamp(50px, 12vw, 78px);
+            border-radius: 50%;
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 25px rgba(255, 204, 0, 0.45);
+            object-fit: cover;
+            flex-shrink: 0;
+            animation: floatPulse 4s ease-in-out infinite;
+        }
+        .hero-text { text-align: left; min-width: 0; }
+        .hero-text h1 {
+            font-size: clamp(1.2rem, 4.4vw, 2rem);
+            color: var(--accent);
+            text-shadow: 0 2px 16px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 204, 0, 0.4);
+            line-height: 1.15;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .hero-text p {
+            font-size: clamp(0.76rem, 2.5vw, 1rem);
+            color: var(--lightblue);
+            margin: 0;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .stat-item {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(8px);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: clamp(0.72rem, 2.3vw, 0.88rem);
+            white-space: nowrap;
+            border: 1px solid rgba(255, 204, 0, 0.15);
+        }
+        .stat-number { font-weight: 700; color: var(--accent); }
+        .social-links {
+            display: flex;
+            gap: 9px;
+            align-items: center;
+        }
+        .social-links a {
+            width: clamp(36px, 9vw, 44px);
+            height: clamp(36px, 9vw, 44px);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .social-links a:hover {
+            background: var(--accent);
+            transform: scale(1.12) rotate(6deg);
+            box-shadow: 0 0 22px rgba(255, 204, 0, 0.7);
+        }
+        .social-links a svg { width: 45%; height: 45%; }
+
+        /* ===== НАПИС ПРО ЯКІСТЬ ===== */
+        .quality-warning {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.9rem clamp(1rem, 4vw, 1.5rem) 0;
+            text-align: center;
+        }
+        .quality-warning h2 {
+            color: var(--accent);
+            font-size: clamp(0.95rem, 2.7vw, 1.2rem);
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+
+        /* ===== КОНТЕЙНЕР ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 clamp(0.85rem, 4vw, 1.5rem);
+        }
+
+        /* ===== СЕКЦІЇ ===== */
+        .section {
+            padding: clamp(1.2rem, 4vw, 2.5rem) 0 0.5rem;
+        }
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: clamp(1.1rem, 3.6vw, 1.7rem);
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+        .section-title .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(32px, 8vw, 38px);
+            height: clamp(32px, 8vw, 38px);
+            background: linear-gradient(135deg, rgba(255, 204, 0, 0.2), rgba(255, 153, 0, 0.1));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
+            flex-shrink: 0;
+        }
+        .section-title em {
+            font-style: normal;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ===== КОМПАКТНИЙ БЛОК ЗАМОВЛЕННЯ ===== */
+        .order-compact {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.9rem;
+            flex-wrap: wrap;
+            background: linear-gradient(135deg, rgba(255, 204, 0, 0.12), rgba(0, 153, 255, 0.12));
+            border: 1px solid var(--border-hover);
+            border-radius: var(--radius);
+            padding: clamp(12px, 3vw, 20px) clamp(14px, 3.5vw, 26px);
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+        .order-compact::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 204, 0, 0.18), transparent 70%);
+            pointer-events: none;
+        }
+        .order-compact-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1 1 220px;
+            position: relative;
+            z-index: 2;
+            min-width: 0;
+        }
+        .order-compact-icon {
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
+            flex-shrink: 0;
+        }
+        .order-compact-text h3 {
+            font-size: clamp(0.95rem, 3vw, 1.2rem);
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: -0.2px;
+            margin-bottom: 2px;
+        }
+        .order-compact-text p {
+            color: var(--text-dim);
+            font-size: clamp(0.74rem, 2.4vw, 0.88rem);
+            margin: 0;
+        }
+        .order-compact-btn {
+            position: relative;
+            z-index: 2;
+            padding: 11px 26px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #002b5e;
+            font-size: clamp(0.84rem, 2.7vw, 0.98rem);
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            box-shadow: 0 6px 22px rgba(255, 204, 0, 0.35);
+            font-family: inherit;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .order-compact-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 10px 32px rgba(255, 204, 0, 0.55);
+        }
+        .order-compact-btn:active { transform: translateY(-1px) scale(0.99); }
+        .order-compact-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -100%;
+            width: 60%;
+            height: 200%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+            transform: skewX(-25deg);
+            animation: shine 4s infinite;
+        }
+        @media (max-width: 560px) {
+            .order-compact { flex-direction: column; text-align: center; }
+            .order-compact-text { flex-direction: column; gap: 4px; text-align: center; }
+            .order-compact-btn { width: 100%; }
+        }
+
+        /* ===== СІТКА КАРТОК ===== */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        /* ===== КАРТКА ГРИ ===== */
+        .game-card {
+            background: var(--card);
+            backdrop-filter: blur(18px) saturate(180%);
+            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0;
+            animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                        box-shadow 0.4s ease,
+                        border-color 0.4s ease;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--shadow-glow), 0 30px 60px rgba(0, 0, 0, 0.55);
+            border-color: var(--border-hover);
+        }
+        .game-card:active { transform: translateY(-6px) scale(1.01); }
+
+        .card-img-wrap {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 2 / 3;
+            background: linear-gradient(135deg, #12233f, #0a1428);
+        }
+        .card-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .game-card:hover .card-img-wrap img { transform: scale(1.1); }
+        .card-img-wrap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 55%, rgba(7, 14, 28, 0.92) 100%);
+            pointer-events: none;
+        }
+        .card-ribbon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #002b5e;
+            font-size: 0.66rem;
+            font-weight: 800;
+            padding: 3px 9px;
+            border-radius: 50px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+            z-index: 2;
+        }
+        .game-info { padding: 12px 14px 14px; }
+        .game-info h3 {
+            margin-bottom: 7px;
+            color: #fff;
+            font-size: clamp(0.86rem, 2.6vw, 1.05rem);
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.6em;
+        }
+        .tag {
+            display: inline-block;
+            background: rgba(0, 153, 255, 0.22);
+            color: #8fd0ff;
+            border: 1px solid rgba(0, 153, 255, 0.35);
+            padding: 2px 9px;
+            border-radius: 30px;
+            font-size: 0.68rem;
+            margin: 2px 3px 2px 0;
+            white-space: nowrap;
+        }
+        .tag-updated {
+            background: rgba(0, 204, 102, 0.18);
+            color: #6effb8;
+            border-color: rgba(0, 204, 102, 0.4);
+        }
+        .progress-container { margin-top: 9px; }
+        .progress-label {
+            font-size: 0.68rem;
+            margin-bottom: 4px;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+        }
+        .progress-bar {
+            height: 5px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ccff, var(--accent));
+            border-radius: 10px;
+            transition: width 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+        }
+        .translated-label {
+            color: #88ddff;
+            font-size: 0.68rem;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        /* ===== ФІЛЬТРИ ===== */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .filter-group strong {
+            color: var(--accent);
+            white-space: nowrap;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+        }
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.07);
+            color: #dbeaff;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: clamp(0.78rem, 2.5vw, 0.95rem);
+            transition: all 0.25s ease;
+            font-family: inherit;
+            min-height: 38px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .filter-btn:hover { background: rgba(255, 255, 255, 0.16); }
+        .filter-btn:active { transform: scale(0.96); }
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #002b5e;
+            font-weight: 700;
+            border-color: transparent;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.55);
+        }
+        .sort-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .sort-label {
+            color: var(--accent);
+            font-size: clamp(0.78rem, 2.5vw, 0.95rem);
+            white-space: nowrap;
+        }
+        .sort-select {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 14px;
+            color: #fff;
+            cursor: pointer;
+            font-size: clamp(0.78rem, 2.5vw, 0.95rem);
+            font-family: inherit;
+        }
+        .sort-select option { background: var(--bg-2); color: #fff; }
+
+        /* ===== СПИСОК ЗАМОВЛЕНЬ ===== */
+        .orders-box {
+            background: var(--card);
+            backdrop-filter: blur(18px) saturate(180%);
+            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: clamp(14px, 3.5vw, 24px);
+            box-shadow: var(--shadow-card);
+        }
+        .orders-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+        .stat {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 7px 10px;
+            border-radius: 50px;
+            font-size: clamp(0.72rem, 2.4vw, 0.88rem);
+            border: 1px solid rgba(255, 204, 0, 0.15);
+            white-space: nowrap;
+            text-align: center;
+        }
+        .stat b { color: var(--accent); }
+        .orders-filters {
+            display: flex;
+            gap: 0.45rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.9rem;
+        }
+        .orders-filters .filter-btn { padding: 7px 14px; }
+        .orders-list { display: flex; flex-direction: column; gap: 7px; }
+        .order-item {
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 13px;
+            padding: clamp(9px, 2.5vw, 14px) clamp(11px, 3vw, 18px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 9px;
+            flex-wrap: wrap;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInUp 0.45s forwards;
+        }
+        .order-item:hover {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 204, 0, 0.3);
+            transform: translateX(4px);
+        }
+        .order-name {
+            font-size: clamp(0.82rem, 2.6vw, 0.98rem);
+            font-weight: 600;
+            flex: 1 1 180px;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            min-width: 0;
+        }
+        .order-num { color: var(--text-dim); font-size: 0.85em; margin-right: 5px; }
+        .order-author-mini { color: var(--text-dim); font-size: 0.68rem; margin-left: 5px; }
+        .badge {
+            padding: 4px 11px;
+            border-radius: 50px;
+            font-size: clamp(0.66rem, 2.2vw, 0.8rem);
+            font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .badge.done {
+            background: rgba(0, 204, 102, 0.16);
+            color: var(--green);
+            border: 1px solid rgba(0, 204, 102, 0.5);
+        }
+        .badge.todo {
+            background: rgba(255, 68, 68, 0.13);
+            color: var(--red);
+            border: 1px solid rgba(255, 68, 68, 0.45);
+        }
+        .empty {
+            text-align: center;
+            padding: 26px 16px;
+            color: var(--text-dim);
+            font-size: 0.88rem;
+        }
+
+        /* ===== МОДАЛЬНЕ ВІКНО ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 10, 25, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            padding-top: calc(10px + var(--safe-top));
+            padding-bottom: calc(10px + var(--safe-bottom));
+        }
+        .modal-content {
+            background: rgba(12, 24, 52, 0.97);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            max-width: 950px;
+            width: 100%;
+            max-height: 92vh;
+            max-height: 92dvh;
+            overflow-y: auto;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 204, 0, 0.25);
+            animation: modalPop 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.75);
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.04); border-radius: 10px; }
+        .modal-content::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 38px;
+            height: 38px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent);
+            transition: all 0.25s ease;
+            z-index: 10;
+            line-height: 1;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .modal-close:hover { background: var(--accent); color: #002b5e; transform: rotate(90deg); }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            padding: clamp(20px, 4vw, 40px);
+        }
+        .modal-top {
+            display: flex;
+            flex-wrap: wrap;
+            gap: clamp(20px, 4vw, 32px);
+            width: 100%;
+        }
+        .modal-img {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+        }
+        .modal-img img {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 204, 0, 0.15);
+        }
+        .modal-info { flex: 2; min-width: 240px; }
+        .modal-info h2 {
+            color: var(--accent);
+            margin-bottom: 14px;
+            font-size: clamp(1.3rem, 4vw, 2rem);
+            line-height: 1.2;
+            font-weight: 800;
+        }
+        .modal-desc {
+            color: #b8d0f0;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+        }
+        .modal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0 10px;
+        }
+        .download-btn, .back-btn, .share-btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 50px;
+            font-size: clamp(0.85rem, 2.6vw, 1rem);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .download-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #002b5e;
+            position: relative;
+            overflow: hidden;
+        }
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255, 204, 0, 0.5); }
+        .download-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -100%;
+            width: 60%;
+            height: 200%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: skewX(-25deg);
+            animation: shine 4s infinite;
+        }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .back-btn:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-3px); }
+        .share-btn {
+            background: rgba(0, 153, 255, 0.18);
+            color: #5cb8ff;
+            border: 1px solid rgba(0, 153, 255, 0.35);
+        }
+        .share-btn:hover { background: #0099ff; color: #fff; transform: translateY(-3px); }
+
+        /* ===== СТРІЛКИ НАВІГАЦІЇ МІЖ ІГРАМИ ===== */
+        .modal-nav {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: rgba(10, 20, 45, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: var(--accent);
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .modal-nav:hover {
+            background: var(--accent);
+            color: #002b5e;
+            box-shadow: 0 0 22px rgba(255, 204, 0, 0.6);
+        }
+        .modal-nav:active { transform: translateY(-50%) scale(0.94); }
+        .modal-nav.prev { left: calc(10px + var(--safe-left)); }
+        .modal-nav.next { right: calc(10px + var(--safe-right)); }
+        .modal-nav:disabled { opacity: 0.2; cursor: not-allowed; }
+        @media (max-width: 700px) {
+            .modal-nav { width: 40px; height: 40px; font-size: 18px; }
+        }
+        @media (max-width: 480px) {
+            .modal-nav {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+                top: auto;
+                bottom: calc(14px + var(--safe-bottom));
+                transform: none;
+            }
+            .modal-nav.prev { left: calc(14px + var(--safe-left)); }
+            .modal-nav.next { right: calc(14px + var(--safe-right)); }
+            .modal-nav:active { transform: scale(0.94); }
+        }
+
+        /* ===== КОМЕНТАРІ ===== */
+        .comments-full-width {
+            width: 100%;
+            margin-top: 26px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(255, 204, 0, 0.22);
+        }
+        .comments-title {
+            color: var(--accent);
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-weight: 700;
+        }
+        .comments-count {
+            background: rgba(0, 153, 255, 0.22);
+            border: 1px solid rgba(0, 153, 255, 0.3);
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.76rem;
+            color: #8fd0ff;
+        }
+        .comment-form {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: clamp(16px, 3vw, 22px);
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        .comment-form input, .comment-form textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 204, 0, 0.18);
+            border-radius: 12px;
+            padding: 13px 16px;
+            color: #fff;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            font-family: inherit;
+            transition: border-color 0.25s ease;
+        }
+        .comment-form input:focus, .comment-form textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.09);
+        }
+        .comment-form textarea { min-height: 90px; resize: vertical; }
+        .comment-form button {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #002b5e;
+            border: none;
+            padding: 11px 26px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.25s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .comment-form button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255, 204, 0, 0.4); }
+        .comments-list { width: 100%; }
+        .comment-item {
+            background: rgba(0, 0, 0, 0.22);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            animation: commentSlide 0.3s ease;
+            width: 100%;
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .comment-author { color: var(--accent); font-weight: 700; font-size: 0.85rem; }
+        .comment-date { color: var(--text-dim); font-size: 0.72rem; }
+        .comment-text { color: var(--text); line-height: 1.55; font-size: 0.92rem; word-break: break-word; }
+        .loading-comments, .no-comments { text-align: center; padding: 28px; color: var(--text-dim); font-size: 0.95rem; }
+        .comment-message {
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            font-size: 0.86rem;
+            transition: opacity 0.3s ease;
+        }
+        .comment-message.success { background: rgba(0, 200, 100, 0.12); border: 1px solid var(--green); color: #6effb8; }
+        .comment-message.error { background: rgba(255, 50, 50, 0.12); border: 1px solid var(--red); color: #ff9a9a; }
+
+        /* ===== МОДАЛЬНЕ ВІКНО ЗАМОВЛЕННЯ ===== */
+        .order-modal-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+            margin-top: 10px;
+        }
+        .order-modal-head h2 {
+            color: var(--accent);
+            font-size: clamp(1.35rem, 3.6vw, 1.75rem);
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        /* Картинка + опис процесу перекладу */
+        .order-info-box {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255, 204, 0, 0.18);
+            border-radius: 16px;
+            padding: clamp(20px, 4vw, 28px);
+            margin-bottom: 24px;
+        }
+        .order-info-img {
+            width: clamp(110px, 20vw, 160px);
+            height: auto;
+            border-radius: 12px;
+            object-fit: contain;
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .order-info-text {
+            color: #b8d0f0;
+            font-size: clamp(0.9rem, 2.4vw, 1.05rem);
+            line-height: 1.65;
+            min-width: 0;
+        }
+        .order-info-text strong { color: var(--accent); }
+
+        @media (max-width: 560px) {
+            .order-info-box { 
+                flex-direction: column; 
+                align-items: center; 
+                text-align: center; 
+                gap: 16px;
+            }
+            .order-info-img { width: 140px; }
+        }
+
+        /* Форма */
+        .order-modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .order-modal-form input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 204, 0, 0.18);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: #fff;
+            font-size: clamp(0.95rem, 2.6vw, 1.05rem);
+            font-family: inherit;
+            transition: border-color 0.25s ease, background 0.25s ease;
+        }
+        .order-modal-form input::placeholder { color: rgba(200, 220, 255, 0.45); }
+        .order-modal-form input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.09);
+        }
+        .order-modal-form button {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #002b5e;
+            border: none;
+            padding: 16px 28px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: clamp(1rem, 2.8vw, 1.1rem);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 6px 22px rgba(255, 204, 0, 0.3);
+            margin-top: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .order-modal-form button:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 204, 0, 0.5); }
+        .order-modal-form button:active { transform: translateY(0) scale(0.98); }
+        .order-modal-form button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -100%;
+            width: 60%;
+            height: 200%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: skewX(-25deg);
+            animation: shine 4s infinite;
+        }
+        #order-msg {
+            display: none;
+            margin: 4px 0 0;
+            font-size: 0.9rem;
+        }
+
+        /* ===== ПЛАВАЮЧИЙ ЧАТ ===== */
+        .chat-widget {
+            position: fixed;
+            bottom: calc(20px + var(--safe-bottom));
+            right: calc(20px + var(--safe-right));
+            z-index: 900;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .chat-toggle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #002b5e;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 6px 22px rgba(255, 204, 0, 0.45);
+            transition: all 0.3s ease;
+            animation: chatPulse 3s infinite;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .chat-toggle:hover { transform: scale(1.1); animation: none; }
+        .chat-toggle.open { animation: none; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+
+        .chat-window {
+            position: fixed;
+            bottom: calc(85px + var(--safe-bottom));
+            right: calc(20px + var(--safe-right));
+            width: 340px;
+            max-width: calc(100vw - 40px);
+            height: 480px;
+            max-height: calc(100vh - 120px);
+            background: rgba(12, 24, 52, 0.97);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            border-radius: var(--radius);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            transform-origin: bottom right;
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.3s ease;
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .chat-window.open {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Перетягування */
+        .chat-window.dragging {
+            transition: none;
+            cursor: grabbing;
+        }
+        .chat-header {
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.35);
+            border-bottom: 1px solid rgba(255, 204, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: grab;
+            user-select: none;
+            flex-shrink: 0;
+        }
+        .chat-header:active { cursor: grabbing; }
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--accent);
+        }
+        .chat-title .tag-chat {
+            background: rgba(255, 204, 0, 0.15);
+            border: 1px solid rgba(255, 204, 0, 0.35);
+            padding: 2px 8px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            color: var(--accent);
+        }
+        .chat-minimize {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        .chat-minimize:hover { background: rgba(255, 255, 255, 0.25); }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        .chat-msg {
+            display: flex;
+            flex-direction: column;
+            max-width: 85%;
+            animation: commentSlide 0.2s ease;
+        }
+        .chat-msg.self { align-self: flex-end; align-items: flex-end; }
+        .chat-msg-author {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 3px;
+            padding: 0 4px;
+        }
+        .chat-msg-text {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            line-height: 1.4;
+            word-break: break-word;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .chat-msg.self .chat-msg-text {
+            background: rgba(0, 153, 255, 0.25);
+            border-color: rgba(0, 153, 255, 0.4);
+            color: #fff;
+        }
+        .chat-msg.self .chat-msg-author { color: var(--lightblue); }
+
+        .chat-form {
+            display: flex;
+            gap: 6px;
+            padding: 10px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 204, 0, 0.15);
+            flex-shrink: 0;
+        }
+        .chat-form input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 204, 0, 0.2);
+            border-radius: 50px;
+            padding: 8px 14px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-family: inherit;
+            min-width: 0;
+        }
+        .chat-form input:focus { outline: none; border-color: var(--accent); }
+        .chat-form button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #002b5e;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .chat-form button:hover { transform: scale(1.05); }
+
+        @media (max-width: 480px) {
+            .chat-window {
+                width: calc(100vw - 20px);
+                right: 10px;
+                bottom: calc(75px + var(--safe-bottom));
+                height: calc(100vh - 100px);
+                max-height: 500px;
+            }
+            .chat-toggle { width: 50px; height: 50px; font-size: 22px; right: 10px; bottom: calc(15px + var(--safe-bottom)); }
+        }
+
+        /* ===== SCROLL TOP ===== */
+        .scroll-top {
+            position: fixed;
+            bottom: calc(18px + var(--safe-bottom));
+            right: calc(90px + var(--safe-right));
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.35s ease;
+            z-index: 99;
+            font-size: 17px;
+            font-weight: bold;
+            color: #002b5e;
+            box-shadow: 0 6px 22px rgba(255, 204, 0, 0.45);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .scroll-top.show { opacity: 1; visibility: visible; }
+        .scroll-top:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(255, 204, 0, 0.65); }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: rgba(5, 12, 30, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            padding: 24px 16px;
+            padding-bottom: calc(24px + var(--safe-bottom));
+            text-align: center;
+            margin-top: 44px;
+            border-top: 1px solid var(--border);
+        }
+        .footer p { color: var(--text-dim); font-size: 0.78rem; }
+        .no-results {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text-dim);
+            grid-column: 1 / -1;
+            font-size: 0.92rem;
+        }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 900px) {
+            .hero-content { gap: 0.7rem; }
+            .hero-stats { gap: 0.5rem; }
+            .nav { padding: 0.6rem 1rem; }
+        }
+        @media (max-width: 768px) {
+            .hero { padding: 1rem 1rem 0.8rem; }
+            .social-links a { width: 36px; height: 36px; }
+            .search { padding: 10px 15px; }
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 13px; }
+        }
+        @media (max-width: 560px) {
+            .hero-left { flex-wrap: wrap; justify-content: center; }
+            .hero-text { text-align: center; }
+            .modal-actions { flex-direction: column; }
+            .download-btn, .back-btn, .share-btn { width: 100%; text-align: center; }
+            .order-item { flex-direction: column; align-items: stretch; gap: 7px; }
+            .badge { align-self: flex-start; }
+            .orders-stats { grid-template-columns: 1fr 1fr; }
+            .modal-img { max-width: 200px; min-width: 130px; }
+        }
+        @media (max-width: 420px) {
+            .nav { flex-wrap: nowrap; gap: 0.4rem; }
+            .search { padding: 9px 13px; font-size: 0.84rem; }
+            .logo { font-size: 1.35rem; }
+            .games-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .game-info { padding: 10px 11px 12px; }
+            .game-info h3 { font-size: 0.82rem; }
+            .filter-btn { padding: 7px 12px; font-size: 0.78rem; min-height: 36px; }
+            .sort-select { padding: 7px 12px; font-size: 0.78rem; }
+            .filters { gap: 0.6rem 0.9rem; }
+            .modal-content { border-radius: 16px; }
+            .modal-body { padding: 16px; }
+            .modal-close { top: 10px; right: 10px; width: 34px; height: 34px; font-size: 21px; }
+            .modal-top { flex-direction: column; align-items: center; }
+            .modal-img { max-width: 150px; min-width: 120px; }
+            .modal-info { min-width: 0; width: 100%; }
+            .modal-info h2 { text-align: center; }
+        }
+        @media (max-width: 340px) {
+            .logo { font-size: 1.2rem; }
+            .games-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .stat { font-size: 0.68rem; padding: 6px 8px; }
+        }
+
+        /* ===== ДОСТУПНІСТЬ ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .game-card, .order-item { opacity: 1; }
+            .chat-window { transition: none; }
+        }
+        :root { color-scheme: dark; }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <div class="nav">
+            <div class="logo" onclick="goToHome()">Ukr<span>Play</span></div>
+            <input type="text" class="search" placeholder="🔍 Пошук ігор..." id="searchInput" onkeyup="applyFilters()">
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-left">
+                <img src="logo.png" alt="Logo" class="hero-logo" onerror="this.src='https://placehold.co/200x200/0a1428/ffcc00?text=U'">
+                <div class="hero-text">
+                    <h1>Грайте українською</h1>
+                    <p>з машинним перекладом, але з українізатором</p>
+                </div>
+            </div>
+            <div class="hero-stats">
+                <span class="stat-item">🤖 ШІ-переклад</span>
+                <span class="stat-item">📦 <span class="stat-number" id="gamesCount">0</span> ігор</span>
+            </div>
+            <div class="social-links">
+                <a href="https://www.youtube.com/channel/UC7RZe16lzkqlsrv1ahgQZFA" target="_blank" rel="noopener" title="YouTube">
+                    <svg viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .5 6.186C0 8.07 0 12 0 12s0 3.93.5 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.377.505 9.377.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg>
+                </a>
+                <a href="https://t.me/UkrPlayUA" target="_blank" rel="noopener" title="Telegram">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#229ED9"/><path d="M17.5 7.5L5.5 12L9.5 13.5L11 17.5L17.5 7.5Z" fill="white"/><path d="M11 13.5L17.5 7.5L11 13.5Z" fill="#229ED9"/></svg>
+                </a>
+                <a href="https://x.com/" target="_blank" rel="noopener" title="X">
+                    <svg viewBox="0 0 24 24" fill="white"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H1.15l8.6-9.83L0 1.154h7.594l5.243 6.932L18.901 1.153zM17.61 20.644h2.039L6.486 3.24H4.298L17.61 20.644z"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== НАПИС ПРО ЯКІСТЬ ===== -->
+    <div class="quality-warning">
+        <h2>Якість перекладу не дуже висока</h2>
+    </div>
+
+    <!-- ===== КОМПАКТНИЙ БЛОК ЗАМОВЛЕННЯ ===== -->
+    <div class="container">
+        <section class="section" id="orderSection" style="padding-bottom:0.5rem;">
+            <div class="order-compact">
+                <div class="order-compact-text">
+                    <span class="order-compact-icon">🚀</span>
+                    <div>
+                        <h3>Замовити українізатор</h3>
+                        <p>Маєш гру, яку хочеш бачити українською? Залиш заявку!</p>
+                    </div>
+                </div>
+                <button class="order-compact-btn" onclick="openOrderForm()">📝 Замовити</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== УКРАЇНІЗАТОРИ ===== -->
+    <div class="container">
+        <section class="section" id="translationsSection">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">
+                        <span class="icon">🎮</span>
+                        Українізатори <em>для ігор</em>
+                    </h2>
+                </div>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <strong>Тип перекладу:</strong>
+                    <button class="filter-btn active" data-filter="translation" data-value="all">Всі</button>
+                    <button class="filter-btn" data-filter="translation" data-value="Машпер">Машпер</button>
+                    <button class="filter-btn" data-filter="translation" data-value="Машред">Машред</button>
+                    <button class="filter-btn" data-filter="translation" data-value="Ручпер">Ручпер</button>
+                </div>
+                <div class="sort-wrapper">
+                    <span class="sort-label">📌 Сортувати:</span>
+                    <select class="sort-select" id="sortSelect" onchange="sortGames()">
+                        <option value="updated">🕐 За оновленням</option>
+                        <option value="quality">⭐ За якістю</option>
+                        <option value="name">🔤 За назвою</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="games-grid" id="gamesGrid"></div>
+        </section>
+    </div>
+
+    <!-- ===== СПИСОК ЗАМОВЛЕНИХ ІГОР ===== -->
+    <div class="container">
+        <section class="section" id="ordersSection">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">
+                        <span class="icon">📋</span>
+                        Замовлені <em>ігри</em>
+                    </h2>
+                </div>
+            </div>
+
+            <div class="orders-box">
+                <div class="orders-stats" id="ordersStats"></div>
+                <div class="orders-filters">
+                    <button class="filter-btn active" data-order-filter="all">Всі</button>
+                    <button class="filter-btn" data-order-filter="done">✅ Зроблено</button>
+                    <button class="filter-btn" data-order-filter="todo">⏳ Не зроблено</button>
+                </div>
+                <div class="orders-list" id="ordersList"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== МОДАЛЬНЕ ВІКНО ГРИ ===== -->
+    <div class="modal" id="modal">
+        <button class="modal-nav prev" id="modalNavPrev" onclick="navigateGame(-1)" aria-label="Попередня гра">‹</button>
+        <button class="modal-nav next" id="modalNavNext" onclick="navigateGame(1)" aria-label="Наступна гра">›</button>
+
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal()">✕</div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- ===== МОДАЛЬНЕ ВІКНО ЗАМОВЛЕННЯ ===== -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeOrderForm()">✕</div>
+            <div class="modal-body">
+                <div class="order-modal-head">
+                    <h2>📝 Замовити українізатор</h2>
+                </div>
+
+                <!-- Картинка + короткий опис процесу перекладу -->
+                <div class="order-info-box">
+                    <img src="images/mashper.jpg" alt="Машинний переклад" class="order-info-img"
+                         onerror="this.style.display='none'">
+                    <div class="order-info-text">
+                        Переклад виконується <strong>безкоштовним ШІ</strong> з урахуванням усього тексту гри:
+                        спершу аналізується весь текст і формується глосарій (терміни, імена, назви),
+                        далі виконується переклад із його використанням, а потім — мінімальне редагування
+                        очевидних помилок. Мета — готовий український переклад без ручного перекладу кожного рядка.
+                    </div>
+                </div>
+
+                <form class="order-modal-form" onsubmit="return submitOrder(event)">
+                    <input type="text" id="order-author" placeholder="👤 Ваше ім'я (необов'язково)" maxlength="50">
+                    <input type="text" id="order-game-name" placeholder="🎮 Назва гри (обов'язково)" maxlength="150" required>
+                    <button type="submit">📤 Надіслати заявку</button>
+                    <div id="order-msg" class="comment-message"></div>
+                </form>
+
+                <!-- Блок коментарів (як у звичайних іграх) -->
+                <div class="comments-full-width" id="order-comments-wrapper">
+                    <div class="comments-title">
+                        💬 Коментарі <span id="order-comments-count" class="comments-count">Завантаження...</span>
+                    </div>
+                    <div id="order-comments-msg" class="comment-message"></div>
+                    <div id="order-comments-list" class="comments-list">
+                        <div class="loading-comments">⏳ Завантаження коментарів...</div>
+                    </div>
+                    <div class="comment-form">
+                        <input type="text" id="order-standalone-author" placeholder="👤 Ваше ім'я (необов'язково)" maxlength="50">
+                        <textarea id="order-standalone-text" placeholder="💬 Напишіть коментар... (Ctrl+Enter)" maxlength="2000"></textarea>
+                        <button onclick="submitOrderComment()">📤 Залишити коментар</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ПЛАВАЮЧИЙ ЖИВИЙ ЧАТ ===== -->
+    <div class="chat-widget">
+        <button class="chat-toggle" id="chatToggle" onclick="toggleChat()" title="Живий чат">💬</button>
+        
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header" id="chatHeader">
+                <div class="chat-title">
+                    💬 Живий чат <span class="tag-chat">#chatukrplay</span>
+                </div>
+                <button class="chat-minimize" onclick="toggleChat()" title="Згорнути">—</button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="loading-comments">⏳ Завантаження чату...</div>
+            </div>
+            
+            <form class="chat-form" onsubmit="return sendChatMessage(event)">
+                <input type="text" id="chatInput" placeholder="Написати повідомлення..." maxlength="500" autocomplete="off">
+                <button type="submit" title="Надіслати">➤</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== SCROLL TOP ===== -->
+    <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p>© 2024-2026 UkrPlay — Українізатори ігор</p>
+    </footer>
+
+    <script>
+        // ========== ІГРИ ==========
+        const games = [
+    {
+        id: "LighthouseOfMadness",
+        title: "Українізатор для Lighthouse of Madness",
+        img: "images/LighthouseOfMadness.jpg",
+        desc: "Пригодницький горор від першої особи, у якому інженер Доріан Кеннон вирушає на віддалений острів поблизу Іннсмута, щоб розшукати зниклих доглядачів маяка. На нього чекають покинуті будівлі, таємничі шахти й моторошні секрети, приховані серед скель і морських туманів. Гра поєднує дослідження, розв’язування головоломок і психологічний жах у стилі творів Говарда Лавкрафта. Поступово розкриваючи таємниці острова, гравець зіткнеться з незбагненними явищами, що випробовуватимуть його розсудок і змушуватимуть сумніватися в реальності.",
+        categories: ["Оновлено 07.11.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/pigglZKa#r0AGK0JMuJiiCZVEt-wltA"
+    },
+	{
+        id: "tenebris-somnia",
+        title: "Українізатор для Tenebris Somnia",
+        img: "images/tenebris-somnia.jpg",
+        desc: "Пригодницький горор із піксельною графікою в ретростилі, що поєднує атмосферу класичних ігор жахів із незвичайними кінематографічними сценами за участю справжніх акторів. Головна героїня Джулія намагається розгадати таємницю зникнення свого колишнього хлопця, поступово занурюючись у моторошний світ, де нічні жахіття можуть виявитися реальністю. На гравців чекають дослідження похмурих локацій, розгадування головоломок, пошук підказок і зустрічі з моторошними створіннями. Особливістю гри є поєднання двовимірної піксельної графіки з відеосценами, знятими за участю акторів і з використанням практичних спецефектів. Це створює неповторну атмосферу психологічного жаху та напружену історію, сповнену таємниць.",
+        categories: ["Оновлено 06.11.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/Mr4mXRKB#f1X73r2ME1_zKn40K2ZZcQ"
+    },
+	{
+        id: "lightyear-frontier",
+        title: "Українізатор для Lightyear Frontier",
+        img: "images/lightyear-frontier.jpg",
+        desc: "Затишна пригодницька гра з елементами фермерського симулятора, дія якої розгортається на далекій чужій планеті. Гравці керують потужним механічним роботом, досліджують мальовничі краєвиди, збирають ресурси та облаштовують власну ферму серед незвичних рослин і дивовижних істот. На вас чекають вирощування врожаю, будівництво, відновлення довкілля та дослідження таємниць планети. Грати можна наодинці або разом із друзями в кооперативному режимі. Lightyear Frontier пропонує спокійний ігровий процес без поспіху, де головними є дослідження, творчість і гармонія з природою.",
+        categories: ["Оновлено 05.11.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/Iq5zWTTD#JUBwlUAFDw16o_vM6WBf7A"
+    },
+	{
+        id: "queens-domain",
+        title: "Українізатор для Queen's Domain",
+        img: "images/queens-domain.jpg",
+        desc: "Пригодницька рольова гра у фентезійному світі, сповненому небезпек, таємниць і незвіданих земель. На гравців чекають дослідження навколишнього світу, зустрічі з різними персонажами та випробування, що вимагатимуть кмітливості й бойових навичок. Головна мета — відшукати зниклого батька та розкрити похмурі таємниці острова Неасід. Досліджуй заплутані підземелля, відкривай приховані проходи, вдосконалюй спорядження та долай численних ворогів і могутніх босів. Завдяки ретроестетиці, атмосферному світу й динамічному ігровому процесу Queen’s Domain дарує пригоду в дусі класичних фентезійних рольових ігор.",
+        categories: ["Оновлено 04.11.26", "Qwen","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/k2wS3LKb#EKWwladduzuQXFchyhnziA"
+    },
+	{
+        id: "bigcon",
+        title: "Українізатор для The Big Con",
+        img: "images/bigcon.jpg",
+        desc: "Гумористична пригодницька гра, у якій ти граєш за Еббі, що вирушає в подорож Америкою 90-х років. Щоб урятувати сімейний відеопрокат від закриття, їй доведеться заробити гроші незвичним способом — обманювати людей, красти речі та провернути власні афери. На тебе чекає барвистий світ із атмосферою 90-х, кумедними персонажами й різноманітними можливостями для махінацій. Доведеться хитрувати, перевтілюватися та обирати власний підхід до кожної ситуації, адже від твоїх рішень залежить, як розвиватиметься пригода Еббі.",
+        categories: ["Оновлено 03.11.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/R3AgXDRa#xFfcglwfl22F0q3k1HyuZg"
+    },
+	{
+        id: "stygianog",
+        title: "Українізатор для Stygian: Outer Gods",
+        img: "images/stygianog.jpg",
+        desc: "Горор із рольовими елементами, натхненний творчістю Говарда Лавкрафта та міфологією Ктулху. Події гри розгортаються у всесвіті Stygian: Reign of the Old Ones. Головний герой Джек Гаррісон вирушає до загадкового портового містечка Кінгспорт у пошуках зниклого батька. Однак після корабельної аварії він опиняється серед туманних вулиць, покинутих будівель і моторошних таємниць, за якими ховаються давні надприродні сили. На гравців чекають дослідження похмурих локацій, розгадування головоломок, пошук ресурсів і боротьба за власне виживання. Особливу роль відіграє психічний стан героя: зустрічі з незбагненними істотами впливають на його свідомість і можуть змінювати перебіг пригоди. Рішення гравця мають наслідки та впливають на розвиток історії й фінал.",
+        categories: ["Оновлено 02.11.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/kmJ1iLqa#2B47iJnD_-YYuJEgp22RLw"
+    },
+	{
+        id: "atmosfar",
+        title: "Українізатор для ATMOSFAR",
+        img: "images/atmosfar.jpg",
+        desc: "Пригодницька гра з елементами виживання, дія якої розгортається у фантастичному світі серед безкраїх небес і плавучих островів. Гравці досліджуватимуть незвичайні локації, відкриватимуть таємниці загадкового світу й подорожуватимуть на власних повітряних кораблях, долаючи небезпеки та випробування. У грі можна збирати ресурси, створювати спорядження, ремонтувати й удосконалювати літальні апарати, а також облаштовувати власну мобільну базу — величезний повітряний корабель. На вас чекають мінливі погодні умови, незвичайні істоти та випробування на виживання. Досліджувати планету Тікос можна самостійно або разом із друзями",
+        categories: ["Оновлено 08.11.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/ozgDmY7C#3aVaTjWXJ4epVIACezJqhw"
+    },
+	{
+        id: "mechanicus2",
+        title: "Українізатор для Warhammer 40,000: Mechanicus II",
+        img: "images/mechanicus2.jpg",
+        desc: "Покрокова тактична стратегія у похмурому всесвіті Warhammer 40,000, де протистоять одне одному техножерці Імперіуму та стародавні некрони. Гравці зможуть очолити сили Адептус Механікус або армію некронів, кожна з яких має власні цілі, стиль ведення бою та унікальні можливості. На полі бою доведеться продумувати кожен хід, використовувати особливості місцевості, розвивати командирів і добирати загони для різних завдань. Захоплюйте й утримуйте території, керуйте ресурсами та ухвалюйте рішення, що впливатимуть на перебіг війни й долю цілого світу.",
+        categories: ["Оновлено 25.10.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/1iAhybJZ#2cjjiYi9ASoa-USceoE9rg"
+    },
+	{
+        id: "mechanicus",
+        title: "Українізатор для Warhammer 40,000: Mechanicus",
+        img: "images/mechanicus.jpg",
+        desc: "Покрокова тактична гра, у якій ви очолюєте експедицію Адептус Механікус на загадкову планету Сільва Тенебріс. Під її поверхнею спочивають стародавні некрони — небезпечна механічна раса, пробудження якої може загрожувати всьому людству. Досліджуйте гробниці, шукайте технологічні артефакти та розкривайте таємниці забутої цивілізації. Збирайте загін техножерців, покращуйте їхні кібернетичні імпланти й озброєння та беріть участь у тактичних боях, де кожне рішення має значення. Розпоряджайтеся ресурсами, обирайте спорядження й визначайте долю експедиції, адже ваші дії впливатимуть на розвиток подій і фінал історії.",
+        categories: ["Оновлено 24.10.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/wmwmwAJZ#uo_bTuaCM98tbeheLhNotg"
+    },
+	{
+        id: "cloudpunk",
+        title: "Українізатор для Сloudpunk",
+        img: "images/cloudpunk.jpg",
+        desc: "Сюжетна пригодницька гра у жанрі кіберпанку, події якої розгортаються в Нівалісі — величезному футуристичному місті, де хмарочоси сягають небес, а неонові вогні освітлюють нескінченні вулиці. Ви граєте за Ранію, нову кур’єрку нелегальної служби доставки «Клаудпанк», яка вперше виходить на нічну зміну. Її завдання — доставляти посилки клієнтам, не ставлячи зайвих запитань. Досліджуйте місто на літаючому автомобілі, знайомтеся з його дивакуватими мешканцями, розкривайте їхні історії та робіть вибір, що впливатиме на долі персонажів. На вас чекає атмосферна подорож світом технологій, штучного інтелекту, корпоративної влади й людяності, де за кожною доставкою може ховатися несподівана історія.",
+        categories: ["Оновлено 24.10.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/Nrgz1ZJY#Yv-dEiMHZm9g8suxjVnL3A"
+    },
+	{
+        id: "StupidNeverDies",
+        title: "Українізатор для Stupid Never Dies",
+        img: "images/StupidNeverDies.jpg",
+        desc: "Динамічна рольова гра в жанрі екшн від третьої особи, події якої розгортаються у світі, де панують монстри. Головний герой — Дейві, боязкий і найслабший зомбі, який закохується в дівчину Джулію, що загинула, замерзнувши під час Великої війни. Щоби повернути кохану до життя, він має здолати Короля монстрів і подолати небезпечне підземелля. На гравців чекають стрімкі бої, химерні вороги та безліч можливостей для вдосконалення героя. Пожираючи особливі ядра переможених монстрів, Дейві може викрадати їхні здібності й перетворюватися на різних істот, зокрема перевертня, вампіра чи гарпію. Модифікація частин тіла за допомогою спеціального спорядження відкриває нові навички та бойові комбінації, допомагаючи слабкому зомбі стати справжньою силою.",
+        categories: ["Оновлено 20.10.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/JqpBhZiR#kR7UTlsAXG5OzmlEEL8AeQ"
+    },
+	{
+        id: "nivalis_nights",
+        title: "(Тестовий) Українізатор для Nivalis Nights",
+        img: "images/nivalis_nights.jpg",
+        desc: "Симулятор життя в атмосферному кіберпанковому місті Ніваліс, де неонові вогні освітлюють вулиці між океаном і хмарами. Почавши з невеликої локшевої крамниці, ви зможете побудувати власну бізнес-імперію, відкривати ресторани й нічні клуби, керувати персоналом і поступово завойовувати своє місце у великому місті. Окрім розвитку бізнесу, на вас чекають знайомства з мешканцями, дружба, романтичні стосунки та облаштування власного житла. Досліджуйте місто на човні, вирушайте на риболовлю, вирощуйте інгредієнти й змагайтеся з конкурентами. Проте за яскравими неоновими вивісками приховуються небезпеки: посилений контроль корпорацій, комендантська година та таємничий серійний убивця..",
+        categories: ["Оновлено 19.10.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/1uZgSTxD#0JVCySOivPh2VpGfLdeTTA"
+    },
+	{
+        id: "boltgun2",
+        title: "Українізатор для Warhammer 40,000: Boltgun 2",
+        img: "images/boltgun2.jpg",
+        desc: "Динамічний шутер від першої особи в похмурому всесвіті Warhammer 40,000, що продовжує історію оригінальної гри. На вас чекає масштабна кампанія з розгалуженим сюжетом, яка проведе крізь небезпечні світи, від величезних вуликів-міст до зарослих джунглів і демонічних фортець. У ролі космодесантника Малума Кедо або бойової сестри Ніри Вейрат вам доведеться протистояти силам Хаосу та зупинити жахливу загрозу. На вас чекають запеклі перестрілки в дусі класичних ретрошутерів, піксельна графіка, десятки різновидів ворогів і широкий арсенал нищівної зброї. Розривайте єретиків болтерами, розтинайте їх ланцюговим мечем і спалюйте вогнеметом, пробиваючись крізь натовпи демонів Нургла, Кхорна, Тзінча та Слаанеш. У цій кривавій битві на вас чекає лише одне завдання — нести волю Імператора та знищувати все, що загрожує людству.",
+        categories: ["Оновлено 15.10.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/UqgzDAbR#xguoIWpryKGS2x_NbyzYhQ"
+    },
+	{
+        id: "e-day",
+        title: "Українізатор для Gears of War: E-Day",
+        img: "images/e-day.jpg",
+        desc: "Приквел культової серії шутерів від третьої особи, події якого розгортаються під час Дня Прориву — моменту, коли орди локустів виходять із-під землі та починають нищити людську цивілізацію. У центрі історії — молоді Маркус Фенікс і Домінік Сантьяго, які намагаються вижити в перші дні раптового й жорстокого вторгнення. На гравців чекає напружений сюжет про початок війни, дружбу та боротьбу за виживання у світі, що занурюється в хаос. Gears of War: E-Day повертається до витоків серії, обіцяючи похмуру атмосферу, запеклі перестрілки, криваві сутички з локустами та видовищну графіку",
+        categories: ["Оновлено 07.11.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/l24iAbKS#_RTQWAjhgQ5EG4fTuWeiiw"
+    },
+	{
+        id: "permafrost",
+        title: "Українізатор для Permafrost",
+        img: "images/permafrost.jpg",
+        desc: "Похмура гра на виживання у відкритому світі, де цивілізація загинула після загадкової катастрофи, що скувала Землю вічною кригою. У ролі одного з небагатьох уцілілих вам доведеться досліджувати засніжені руїни міст, шукати їжу й ресурси, виготовляти спорядження та боротися з небезпечними істотами й іншими людьми. Тут кожен вихід за межі укриття може стати останнім. Щоб вижити в умовах нещадного холоду, потрібно стежити за температурою тіла, облаштовувати сховища, полювати та створювати необхідні речі. Permafrost поєднує дослідження відкритого світу, збирання ресурсів і напружену боротьбу за життя, де холод може виявитися не менш смертоносним за будь-якого ворога",
+        categories: ["Оновлено 02.11.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/xmQnkboR#3F-m5qC48v5HyiOO24h01Q"
+    },
+	{
+        id: "DaemonXMachina",
+        title: "Українізатор для DAEMON X MACHINA",
+        img: "images/DaemonXMachina.jpg",
+        desc: "Динамічний екшен від третьої особи, у якому гравець керує потужним бойовим мехом Arsenal. Після катастрофи, що змінила світ, людство опинилося під загрозою з боку штучного інтелекту, а найманці вступають у боротьбу за виживання та контроль над новими технологіями. Гра пропонує масштабні битви з механічними противниками, широкий вибір зброї та можливість налаштовувати свій Arsenal під власний стиль гри. Під час місій можна здобувати нове спорядження, модифікувати меха та поступово створювати ідеальну бойову машину.",
+        categories: ["Оновлено 10.10.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/12onhL5A#EHtEAUu_ISjcRGjwV5GxJw"
+    },
+	{
+        id: "AD-Infinitum",
+        title: "Українізатор для Ad Infinitum",
+        img: "images/AD-Infinitum.jpg",
+        desc: "Психологічний горор від першої особи, у якому гравець опиняється в моторошному світі, де реальність переплітається зі спогадами про Першу світову війну. Ви граєте за німецького солдата, який повертається до родинного дому та змушений зіткнутися з травматичними спогадами, страхами й таємницями минулого. Досліджуючи зруйновані окопи, темні коридори та викривлені кошмарні локації, доведеться розгадувати головоломки, ховатися від моторошних істот і поступово відновлювати фрагменти історії героя. Ad Infinitum поєднує атмосферу воєнного жаху з психологічним трилером, де межа між реальністю та кошмаром постійно стирається.",
+        categories: ["Оновлено 03.10.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/9vRmjYCI#vc3v7RENbWuF9M-fG35vxw"
+    },
+	{
+        id: "endofabbys",
+        title: "Українізатор для End of Abyss",
+        img: "images/endofabbys.jpg",
+        desc: "Напружений горор на виживання з елементами дослідження, який занурює гравця у зловісну та гнітючу атмосферу. Опинившись у темних, викривлених глибинах занепалого світу, вам доведеться постійно боротися за життя, зіштовхуючись із невідомими жахами та випробовуючи власну стійкість. Аби вижити в цьому небезпечному оточенні, потрібно ретельно збирати обмежені ресурси, вирішувати головоломки та шукати шляхи виходу з пастки. Кожне прийняте рішення та кожен крок у невідомість наближають до розкриття похмурих таємниць, які приховує безодня.",
+        categories: ["Оновлено 19.10.26", "Deepseek","Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/A2QE2DIZ#DR1UV-3_x3J6dK_g19XM6w"
+    },
+	{
+        id: "sh-townfall",
+        title: "Українізатор для Silent Hill Townfall",
+        img: "images/sh-townfall.jpg",
+        desc: "Психологічний горор у всесвіті Silent Hill, створений студією No Code та виданий Annapurna Interactive у співпраці з Konami. Події гри розгортаються у 1990-х роках на моторошному острові Торранджерс, розташованому біля узбережжя Шотландії. Головним героєм є Тревіс Грейді, знайомий шанувальникам серії за Silent Hill: Origins. Опинившись у дивному й небезпечному місці, він змушений розгадувати таємниці острова й протистояти власним страхам. Гра робить акцент не лише на виживанні, а й на атмосфері, психологічній напрузі та загадковому сюжеті. Розробники обіцяють нову історію, яка розширює всесвіт Silent Hill, але водночас зберігає ключові елементи серії — тривожну атмосферу, символізм, моторошні локації та поступове розкриття таємниць.",
+        categories: ["Оновлено 23.09.26", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/JjJFlQAa#7NGIfjm6gObJ9Yvf1KCvgQ"
+    },
+	{
+        id: "Gungrave_G.O.R.E",
+        title: "Українізатор для Gungrave G.O.R.E",
+        img: "images/Gungrave_G.O.R.E.jpg",
+        desc: "Шутер від третьої особи, що поєднує шалену стрілянину, рукопашні атаки та стильну готичну естетику. Ви граєте за Ґрейва — воскреслого стрільця, озброєного двома величезними пістолетами, який пробивається крізь натовпи ворогів, перетворюючи кожну сутичку на криваву перестрілку. На шляху Ґрейв зіткнеться з могутніми супротивниками, мутантами та злочинними угрупованнями, а сюжет розкриє історію помсти, зради й наслідків поширення небезпечного наркотику SEED. Гра робить ставку на видовищний екшен, величезну кількість ворогів, руйнівні здібності та атмосферу жорстокого аніме-бойовика.",
+        categories: ["Оновлено 21.09.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/RuxBnDAR#NQDanwz7AI6TO9cbuWnpaA"
+    },
+	{
+        id: "talesofarise",
+        title: "Українізатор для Tales of Arise",
+        img: "images/talesofarise.jpg",
+        desc: "Рольова гра від Bandai Namco, дія якої розгортається у світі, де планета Дана протягом 300 років перебуває під владою сусідньої Рени. Гравці вирушають у подорож разом із Алфеном — юнаком, який не відчуває болю, — та Шіонною, дівчиною з Рени, щоб покласти край гнобленню та змінити долю обох світів. Гра поєднує масштабну сюжетну кампанію, дослідження мальовничих локацій і динамічні бої в реальному часі. Герої можуть комбінувати свої атаки в потужні прийоми, використовувати унікальні здібності напарників і поступово розвивати навички, спорядження та взаємини між персонажами.",
+        categories: ["Оновлено 16.09.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/xigD1QyT#rDRRHidINehe0SH3tXkfRQ"
+    },
+	{
+        id: "Agefield-High-Rock-the-School",
+        title: "Українізатор для Agefield High: Rock the School",
+        img: "images/Agefield-High-Rock-the-School.jpg",
+        desc: "Пригодницька гра про шкільне життя, де гравцеві належить стати частиною незвичайного колективу учнів. На вас чекають уроки, спілкування з однокласниками, різноманітні завдання та шкільні пригоди. Досліджуйте територію школи, знайомтеся з її мешканцями й поступово дізнавайтеся більше про те, що відбувається за стінами Agefield High. Гра поєднує дослідження, гумор, взаємодію з персонажами та виконання квестів. Ваші рішення й дії впливають на перебіг подій, а шкільне середовище приховує чимало секретів і несподіванок. Agefield High: Rock the School пропонує легку й атмосферну історію про підлітків, дружбу, суперництво та бажання зробити шкільні будні трохи цікавішими.",
+        categories: ["Оновлено 12.09.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/RyRyVbxJ#aeQncc9au4oq1QIvEpSwDg"
+    },
+	{
+        id: "code-vein-2",
+        title: "Українізатор для Code Vein 2",
+        img: "images/code-vein-2.jpg",
+        desc: "Рольова гра в жанрі action RPG, що поєднує динамічні бої, дослідження небезпечного світу та глибоку систему розвитку персонажа. Гравцям належить вирушити у зруйнований постапокаліптичний світ, де людство бореться за виживання серед надприродних істот і залишків колишньої цивілізації. Особливістю гри залишається можливість змінювати стиль бою, використовувати різноманітну зброю та здібності й підлаштовувати персонажа під власну тактику. Гра робить значний акцент на сюжеті, дослідженні локацій та взаємодії з іншими персонажами. Під час подорожі гравець відкриватиме таємниці світу, братиме участь у складних битвах із могутніми ворогами та зустрічатиме союзників, які допомагатимуть у пригоді. Атмосфера похмурого фентезі, стильна аніме-візуальна подача та вимогливі бої роблять Code Vein 2 продовженням, орієнтованим як на шанувальників оригіналу, так і на нових гравців.",
+        categories: ["Оновлено 11.09.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/BjgHnKCZ#Bt6apS-UIn8tEP-ZI7aF6A"
+    },
+	{
+        id: "mashper",
+        title: "Замовити машинний переклад гри",
+        img: "images/mashper.jpg",
+        desc: "Переклад виконується за допомогою безкоштовного ШІ з урахуванням тексту всієї гри. Спочатку аналізується весь текст, визначаються ключові терміни, імена, назви, особливості перекладу та формується глосарій. Після цього весь текст гри перекладається з використанням створеного глосарію для забезпечення єдності термінології та стилю. Після машинного перекладу виконується мінімальне редагування очевидних помилок, некоректних формулювань та технічних неточностей. Основна мета — отримати готовий український переклад гри без необхідності ручного перекладу кожного рядка. Натиснувши =Завантажити= відкриється список та статус замовлених ігор.",
+        categories: ["Оновлено 01.01.66", "Deepseek", "Машпер"],
+        quality: 0,
+		translated: 0,
+        patchLink: "zamovleni.html"
+    },
+	{
+        id: "Crimson-Moon",
+        title: "Українізатор для Crimson Moon",
+        img: "images/Crimson-Moon.jpg",
+        desc: "Похмура рольова гра у фентезійному світі, де гравцеві належить досліджувати небезпечні землі, битися з ворогами та розкривати таємниці минулого. На шляху героя чекають складні випробування, загадкові персонажі та моторошні істоти. Гра поєднує дослідження світу, динамічні бої та елементи рольової гри. Рішення гравця, розвиток персонажа та взаємодія з навколишнім світом допомагають визначити, якою буде його подорож під кривавим світлом багряного місяця.",
+        categories: ["Оновлено 07.09.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/8vwxSARB#h6pZg6HlN6a9s270XXTV9A"
+    },
+	{
+        id: "aliens-fireteam-2",
+        title: "Українізатор для Aliens Fireteam Elite 2",
+        img: "images/aliens-fireteam-2.jpg",
+        desc: "Динамічний кооперативний шутер у всесвіті «Чужих», де гравці знову вирушають у небезпечні куточки космосу, щоб протистояти ордам ксеноморфів та іншим смертельним загрозам. Обирайте клас бійця, використовуйте різноманітну зброю й спорядження та дійте разом із командою, адже виживання залежить від злагодженої співпраці. На вас чекають напружені місії, нові локації, небезпечні вороги та постійна боротьба за життя. Покращуйте свого персонажа, підлаштовуйте спорядження під власний стиль гри та знищуйте хвилі ворогів у похмурій атмосфері культового всесвіту Alien.",
+        categories: ["Оновлено 03.11.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/N7gBASTK#B9bedeCflSDjg8qmhVsdxA"
+    },
+	{
+        id: "aliens-fireteam",
+        title: "Українізатор для Aliens Fireteam Elite",
+        img: "images/aliens-fireteam.jpg",
+        desc: "Кооперативний шутер від третьої особи, дія якого розгортається у всесвіті «Чужих». Гравці беруть на себе роль колоніальних морпіхів, які вирушають на небезпечні завдання, щоб протистояти ордам ксеноморфів. На шляху доведеться досліджувати покинуті станції та колонії, відбивати атаки ворогів і виконувати різноманітні бойові завдання. Гра пропонує кампанію з кількох сюжетних розділів, різноманітні класи персонажів, великий арсенал зброї та систему розвитку. Кожен клас має власні здібності й тактичну роль, тому успіх значною мірою залежить від злагодженої роботи команди. До трьох гравців можуть разом протистояти ксеноморфам, а за відсутності напарників їхнє місце можуть зайняти боти.",
+        categories: ["Оновлено 10.08.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/YvZACAbR#j_1TfZj15A3mfCQKh_-spA"
+    },
+	{
+        id: "The-Relic-The-First-Guardian",
+        title: "Українізатор для The Relic: The First Guardian",
+        img: "images/The-Relic-The-First-Guardian.jpg",
+        desc: "Рольова екшен-гра з динамічними боями, дія якої розгортається у похмурому фентезійному світі, що пережив падіння великої цивілізації. Досліджуйте стародавні руїни, небезпечні підземелля та занепалі землі, поступово відкриваючи таємниці минулого й походження загадкової Реліквії. На вас чекають напружені сутички, битви з могутніми босами, розвиток здібностей героя та пошук потужного спорядження. Кожне випробування вимагатиме уважності, майстерності й правильної тактики, адже лише справжній Вартовий зможе врятувати світ від темряви, що насувається.",
+        categories: ["Оновлено 04.08.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/czJjHCzZ#DPML-94NHXwmihqegk2eOQ"
+    },
+	{
+        id: "scarlet-nexus",
+        title: "Українізатор для Scarlet Nexus",
+        img: "images/scarlet-nexus.jpg",
+        desc: "Динамічна рольова гра, дія якої розгортається у далекому майбутньому, де людство відкрило пси-способи та створило елітний підрозділ ОСФ для боротьби з загадковими істотами, відомими як Інші. Гравці беруть на себе роль одного з двох головних героїв — Юіто Сумераґі або Касане Рендалл, які володіють надзвичайними психічними здібностями та вступають у бій, використовуючи телекінез і командну роботу з союзниками. Гра поєднує швидкі бої, дослідження футуристичного світу та глибоку сюжетну лінію про таємниці людського мозку, пам’яті й походження здібностей. Рішення героїв, їхні зв’язки з напарниками та розкриття правди про світ поступово змінюють погляд на події, що відбуваються навколо них.",
+        categories: ["Оновлено 01.08.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/IuwwmRAT#zk-N-yLdWcdV_7R_O0iaPQ"
+    },
+	{
+        id: "ForsakenRealms",
+        title: "Українізатор для Forsaken Realms: Vahrin's Call",
+        img: "images/ForsakenRealms.jpg",
+        desc: "Рольова гра з відкритим світом у похмурому фентезійному всесвіті, де на вас чекають небезпечні землі, давні руїни, могутні вороги та таємниці занепалої цивілізації. Досліджуйте світ, виконуйте завдання, розвивайте свого героя та приймайте рішення, що впливатимуть на перебіг пригоди. На вас чекають динамічні битви, пошук цінної здобичі, створення спорядження та зустрічі з незвичайними персонажами. Поєднання дослідження, боїв і захопливої історії створює атмосферну пригоду для всіх шанувальників класичних RPG.",
+        categories: ["Оновлено 28.07.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/drxUjRqb#W2ZpNP7pS7BuFIA4FUu0zQ"
+    },
+	{
+        id: "echoes-of-aincrad",
+        title: "Українізатор для Echоes of Aincrad",
+        img: "images/echoes-of-aincrad.jpg",
+        desc: "Пригодницька гра, натхненна всесвітом Sword Art Online, що переносить гравців назад до легендарного літаючого замку Айнкрад. Досліджуйте знайомі локації, виконуйте завдання, боріться з небезпечними ворогами та поступово розкривайте нову історію, сповнену загадок і відлуння минулого. На вас чекають динамічні бої в реальному часі, розвиток персонажа, покращення спорядження та дослідження поверхів Айнкрада. Поєднання атмосферних пейзажів, знайомої естетики та захопливих битв дозволяє знову відчути дух пригод у світі, де кожен крок наближає до розгадки таємниць замку.",
+        categories: ["Оновлено 11.07.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/MmwmhAYY#5tMhgi2vV1Iwmcz99RTfkw"
+    },
+	{
+        id: "Ground-Zero",
+        title: "Українізатор для Ground Zero",
+        img: "images/ground-zero.jpg",
+        desc: "Ретро-горор на виживання, дія якого розгортається у спустошеній Південній Кореї після падіння метеорита. У ролі елітної оперативниці Со Йон разом із напарником ви досліджуєте зруйновані райони, розкриваєте таємницю катастрофи та боретеся з моторошними мутантами, що заполонили місто. Гра поєднує атмосферу класичних survival horror із сучасним виконанням: дослідження локацій, розв'язання головоломок, обмежені ресурси, напружені сутички та битви з могутніми босами. Фіксована кінематографічна камера й ретро-стиль створюють відчуття культових жахів кінця 90-х, зберігаючи водночас сучасний ігролад.",
+        categories: ["Оновлено 08.07.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/1rRDyAqa#ud8t2uFR2rMYFA9WmWES8A"
+    },
+	{
+        id: "VoidlingBound",
+        title: "Українізатор для Voidling Bound",
+        img: "images/VoidlingBound.jpg",
+        desc: "Екшен-гра від третьої особи, котра поєднує динамічні бої, дослідження та похмуру науково-фантастичну історію. Гравцям належить вирушити у небезпечну подорож крізь загадковий світ, населений дивними істотами та прихованими таємницями, де кожне рішення може вплинути на подальший розвиток подій. Досліджуйте унікальні локації, відкривайте нові здібності та протистійте могутнім ворогам, поступово розкриваючи природу загадкових Voidling. Завдяки атмосферному візуальному стилю, захопливому сюжету та напруженим сутичкам Voidling Bound пропонує незабутню пригоду для шанувальників наукової фантастики та екшен-ігор..",
+        categories: ["Оновлено 05.07.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/86x3CLDT#Si4XGgRex-KX33cEtBqylg"
+    },
+	{
+        id: "occult",
+        title: "Українізатор для The Occultist",
+        img: "images/occult.jpg",
+        desc: "Атмосферна пригодницька гра в жанрі психологічного горору, де гравець досліджує моторошний острів, сповнений таємниць, окультних ритуалів і небезпечних надприродних явищ. Використовуючи містичний маятник, головний герой розкриває секрети минулого та шукає зниклого батька. Гра поєднує дослідження, головоломки та приховане проходження, роблячи акцент на напруженій атмосфері, а не на відкритих боях. Похмурі локації, захопливий сюжет і містичні елементи створюють відчуття постійної небезпеки та невідомості.",
+        categories: ["Оновлено 02.07.26", "Deepseek", "Qwen", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/IvYQ2BAa#scEXnhZTUPLyzaIAoUwDKg"
+    },
+	{
+        id: "aphe",
+        title: "Українізатор для Aphelion",
+        img: "images/aphe.jpg",
+        desc: "Науково-фантастична пригодницька гра, дія якої розгортається у космосі та на далеких планетах. Гравці досліджують загадкові світи, приймають важливі рішення та взаємодіють із технологіями майбутнього, поєднуючи сюжетне проходження з елементами виживання й дослідження. У грі особлива увага приділяється атмосфері самотності, відкриттю невідомого та моральним виборам, які впливають на розвиток подій. Завдяки кінематографічній подачі, детально опрацьованому світу та напруженому сюжету, Aphelion пропонує глибокий досвід для шанувальників космічної фантастики та інтерактивних пригод.",
+        categories: ["Оновлено 01.07.26", "Deepseek", "Машпер"],
+        quality: 5,
+		translated: 100,
+        patchLink: "https://mega.nz/folder/g7oSTSTB#UEZR4jFSS8gC0rEwMedCow"
+    },
+	{
+        id: "mound",
+        title: "Українізатор для The Mound: Omen of Cthulhu",
+        img: "images/mound.jpg",
+        desc: "Кооперативна пригодницька гра в жанрі survival horror, натхненна творчістю Говарда Філіпса Лавкрафта. Гравці вирушають у небезпечну експедицію до загадкових джунглів, де шукають легендарні скарби та намагаються розкрити давні таємниці, приховані в надрах забутого світу. У процесі дослідження команда стикається з надприродними жахами та поступовою втратою здорового глузду. Чим глибше герої занурюються в невідоме, тим сильніше викривлюється їхнє сприйняття реальності, змушуючи сумніватися у власних відчуттях і довірі до союзників.",
+        categories: ["Оновлено 03.11.26", "Qwen", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/NiwQQLBZ#KlgbJJ4Y4akw7F9VbtAagQ"
+    },
+	{
+        id: "msh3",
+        title: "Українізатор для Monster Hunter Stories 3: Twisted Reflection",
+        img: "images/msh3.jpg",
+        desc: "Рольова гра у всесвіті Monster Hunter, де гравець стає Вершником (Rider), який подорожує світом, приручає монстрів і бореться разом зі своїми вірними Monsties. Події розгортаються між двома королівствами — Азурією та Вермеїлем, які опинилися на межі загибелі через загадкове кристалічне лихо та загрозу нової війни. Гра поєднує дослідження відкритих локацій, вирощування та тренування монстрів із покроковими тактичними боями. Центральною частиною сюжету стає таємниця двох Раталосів, що вилупилися з одного яйця та можуть бути пов'язані з давнім пророцтвом. Завдяки яскравому світу, захопливій історії та глибокій системі розвитку Monsties, гра пропонує нову масштабну пригоду для шанувальників серії Monster Hunter.",
+        categories: ["Оновлено 14.06.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/wvoHjLQS#XLnw6g8pYiMQx325gO8v4A"
+    },
+	{
+        id: "got1r",
+        title: "Українізатор для Gothic 1 Remake",
+        img: "images/got1r.jpg",
+        desc: "Cучасне переосмислення культової рольової гри, дія якої розгортається в суворій Колонії Рудників. Гравець бере на себе роль Безіменного в'язня, який опиняється у світі, де влада належить угрупованням засуджених, а кожне рішення впливає на його шлях до виживання та свободи. Ремейк зберігає атмосферу оригіналу, водночас пропонуючи повністю оновлену графіку, сучасну бойову систему та деталізований відкритий світ. Досліджуйте небезпечні землі, виконуйте завдання, приєднуйтеся до одного з таборів і розкрийте таємниці магічного Бар'єра, що відрізав Колонію від решти світу.",
+        categories: ["Оновлено 31.10.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/srJxARLT#i933Gg3sewPxHgvSM_224w"
+    },
+	{
+        id: "krista",
+        title: "Українізатор для Kristala",
+        img: "images/krista.jpg",
+        desc: "Екшен-гра з елементами soulslike, дія якої розгортається у фентезійному світі Айлур. Гравець бере на себе роль котоподібного воїна, який прагне опанувати стародавню магію та розкрити таємницю загадкової хвороби, що охопила королівство. Ігролад поєднує динамічні бої, дослідження відкритих локацій, розвиток персонажа та використання магічних здібностей. Під час подорожі гравці зіштовхуються з небезпечними ворогами, могутніми босами та численними випробуваннями, поступово відкриваючи історію занепаду світу Kristala.",
+        categories: ["Оновлено 03.09.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/tjBFDDQS#8k-h-zndnBfEfRcbUBqQYg"
+    },
+	{
+        id: "stones",
+        title: "Українізатор для Stonemachia",
+        img: "images/stones.jpg",
+        desc: "Гра в стилі soulslike, події якої відбуваються у викривленому світі Medhelan, натхненному Італією. Гравець керує героєм-пішаком на ім’я Zefiro, який проходить через зруйновані міста та прокляті скульптури, поступово розкриваючи таємницю “Пошесті Ангелів” і природи цього світу. Ігролад зосереджений на точних боях з парируваннями та швидких рішеннях у бою. Головна особливість — можливість змінювати шахові форми (пішак, тура, кінь, слон, ферзь), кожна з яких дає унікальний стиль бою та тактичні можливості в різних ситуаціях.",
+        categories: ["Оновлено 01.06.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/wnAWwLhB#AiqdtACSpNtPvRfo2qb3nQ"
+    },
+	{
+        id: "daemx",
+        title: "Українізатор для Daemon X Machina: Titanic Scion",
+        img: "images/daemx.jpg",
+        desc: "Динамічний меха-екшен від студії Marvelous First Studio, продовження гри Daemon X Machina. Гравець керує високотехнологічним бойовим костюмом Arsenal, досліджує відкритий фантастичний світ і бореться проти імперії Axiom та механічно-органічних істот Immortal. Гра поєднує швидкі повітряні й наземні бої, глибоку кастомізацію зброї та броні, великі битви з босами й кооператив до трьох гравців.",
+        categories: ["Оновлено 24.05.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/5ugUEY6b#lbmelbBSjiye9az20YVkxg"
+    },
+	{
+        id: "croath",
+        title: "Українізатор для Crimson Oath",
+        img: "images/croath.jpg",
+        desc: "Інді-екшн RPG у стилі souls-like, де гравець бере на себе роль воїна, що поступово стає сильнішим через складні бої та випробування. Гра відзначається високою складністю, системою парирування, ухилення та контратак, а також великими рівнями з босами й різноманітними ворогами. Події розгортаються на континенті Гуретво, де різні релігійні фракції та боги втручаються у боротьбу за владу після серії зрад і конфліктів. Гравець досліджує цей темний фентезійний світ, поступово розкриваючи сюжет і виконуючи власну клятву, яка визначає його шлях у цьому хаотичному світі.",
+        categories: ["Оновлено 05.05.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/xupiERrB#TRvKBVyeueD_myZ5IQswaA"
+    },
+    {
+        id: "cthulhabbys",
+        title: "Українізатор для Cthulhu: The Cosmic Abyss",
+        img: "images/cthulhabbys.jpg",
+        desc: "Атмосферна пригодницька гра у жанрі лавкрафтіанського горору. Гравець занурюється у моторошний світ стародавніх богів і заборонених знань, де межа між реальністю та божевіллям поступово стирається. Досліджуючи темні глибини океану й покинуті локації, ви стикаєтеся з незбагненними істотами та розгадуєте таємниці, що не повинні були бути відкриті. Гра поєднує дослідження, головоломки та психологічний тиск, змушуючи сумніватися у власному розумі та прийнятих рішеннях. Атмосфера безвиході, тривожний саундтрек і напружений сюжет створюють відчуття постійної небезпеки, де кожен крок може наблизити до розкриття космічної істини — або остаточного занурення у безодню.",
+        categories: ["Оновлено 02.05.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/t3BzGSBB#BTK4S6JvBmGlJmVGgb_hPw"
+    },
+    {
+        id: "norse",
+        title: "Українізатор для NORSE: Oath of Blood",
+        img: "images/norse.jpg",
+        desc: "Тактична RPG із покроковими боями, дія якої відбувається у Норвегії доби вікінгів. Ви граєте за Ґуннара, молодого воїна, який після вбивства свого батька й вигнання з рідної землі повинен відбудувати поселення, налагодити союзницькі стосунки та вести свій загін до помсти. У грі важливі стратегічне планування, розташування юнітів у бою та грамотне використання особливостей місцевості. Вам доведеться керувати ремісниками, фермерами й воїнами, розвивати селище, розподіляти ресурси та покращувати будівлі, щоб отримувати нових воїнів та спорядження. Рішення гравця впливають на історію, а сюжетна сага про честь, зраду й відновлення спадщини розгортається через поглиблені діалоги й завдання.",
+        categories: ["Оновлено 04.05.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/12Y1WaTL#6uM1x2Vn-66NuK3n86bcbQ"
+    },
+            
+    {
+        id: "solas2",
+        title: "Українізатор для Solasta II",
+        img: "images/solas2.jpg",
+        desc: "Подовження тактичної рольової гри, що переносить гравців у фентезійний світ, натхненний настільними RPG. Гра робить акцент на покрокових боях, де важливу роль відіграють позиціонування, освітлення та взаємодія з оточенням. Ви керуєте загоном героїв, кожен з яких має унікальні здібності, класи та стиль гри, а всі рішення під час пригод впливають на розвиток історії та відносини між персонажами.Світ гри став більш відкритим і деталізованим, а сюжет — глибшим і варіативнішим. Особливу увагу приділено кооперативному режиму, що дозволяє проходити кампанію разом з друзями, відтворюючи атмосферу класичних настільних пригод у цифровому форматі.",
+        categories: ["Оновлено 23.10.26", "Deepseek", "Машпер"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/w7JjVJCb#JXJOgcnla4HJGC7Pykzx-A"
+    },
+            
+    {
+        id: "spire2",
+        title: "Українізатор для Slay the Spire 2",
+        img: "images/spire2.jpg",
+        desc: "Продовження популярної карткової рогалик-стратегії Slay the Spire, у якій гравці піднімаються загадковою вежею, борючись із ворогами за допомогою колоди карт. Кожна битва вимагає продуманої стратегії: потрібно правильно комбінувати атаки, захист і особливі здібності, щоб перемогти супротивників і вижити на шляху до вершини. У грі з’являються нові персонажі, карти, вороги та події, що робить кожне проходження унікальним. Покращена графіка, глибші механіки побудови колоди та випадково згенеровані маршрути зберігають дух оригіналу, але пропонують ще більше тактичних можливостей і викликів для гравців.",
+        categories: ["Оновлено 18.09.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/l2hBRbDC#lbLPPcHKGF9o7VF6D3wzeQ"
+    },
+            
+    {
+        id: "bolt40",
+        title: "Українізатор для Warhammer 40,000 Boltgun",
+        img: "images/bolt40.jpg",
+        desc: "Динамічний шутер від першої особи у всесвіті Warhammer 40,000, виконаний у стилі класичних ретро-ігор 90-х років. Гравець бере на себе роль космодесантника, який бореться з ордами хаосу, використовуючи потужну зброю, зокрема легендарний болтер. Гра поєднує швидкий темп боїв, піксельну графіку та атмосферу старих шутерів. Під час проходження гравець досліджує різні рівні, знищує демонів і ворогів Імперіуму, збирає зброю та покращення. Завдяки швидкому геймплею, яскравим вибухам і великій кількості ворогів гра створює відчуття безперервного бою та передає сувору атмосферу темного майбутнього всесвіту Warhammer.",
+        categories: ["Оновлено 11.03.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/tywx3bwB#c2tTuSWj3QczUbO8R79Gow"
+    },
+            
+    {
+        id: "ground2",
+        title: "Українізатор для Grounded 2",
+        img: "images/ground2.jpg",
+        desc: "Пригодницька гра на виживання, у якій гравці знову опиняються зменшеними до розміру мурах і змушені виживати у небезпечному світі звичайного подвір’я. Досліджуючи траву, калюжі та покинуті предмети, вони збирають ресурси, створюють інструменти, будують укриття та борються з комахами, які у такому масштабі стають справжніми монстрами. Гра пропонує як одиночне проходження, так і кооператив із друзями, де важливими є співпраця, стратегія та кмітливість. Розширений світ, нові істоти, покращена система крафту й будівництва роблять пригоди ще більш захопливими та небезпечними, а кожна експедиція у «мікросвіт» приносить нові відкриття.",
+        categories: ["Оновлено 07.11.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/N2QjCSKb#5GQfINtnGHaUIxUx2xakTw"
+    },
+            
+    {
+        id: "metaled",
+        title: "Українізатор для Metal Eden",
+        img: "images/metaled.jpg",
+        desc: "Динамічний екшен із елементами RPG, де гравці беруть на себе роль пілота бойового робота у постапокаліптичному світі, сповненому небезпечних механізмів та мутованих ворогів. Гра поєднує швидкі бої з дослідженням розбитих міст та пусток, де ресурси обмежені, а вибір зброї і тактики впливає на виживання. Гравець може налаштовувати свого меха, комбінуючи різні типи озброєння, броні та додаткових систем, створюючи унікальні комбінації для бою. Metal Eden робить акцент на складних боях, тактичному мисленні та свободі у підході до кожного бою, забезпечуючи гравцю повне занурення у механізований світ.",
+        categories: ["Оновлено 25.02.26", "Deepseek", "Машпер"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/oqYCVIKb#ijJkhSsSSV1kNuUHxPF1tA"
+    },
+            
+    {
+        id: "ac6",
+        title: "Українізатор для Armored Core VI: Fires of Rubicon",
+        img: "images/ac6.jpg",
+        desc: "Науково-фантастичний екшен із серії mech-симуляторів, де гравці керують потужними бойовими роботами. Дія гри відбувається на планеті Рубікон, багатій на ресурс Фірам, який є предметом конфлікту між корпораціями та приватними військовими формуваннями. Гравець бере на себе роль пілота меха-найманця, виконує контракти, веде бої проти інших мехів, роботизованих ворожих сил і величезних механізованих ворогів, використовуючи широкий арсенал зброї та налаштовуючи свого робота під стиль бою. Геймплей поєднує швидкі, тактичні бої з глибокою системою кастомізації мехів.",
+        categories: ["Оновлено 24.02.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/N6hi2LTK#hI7oHtSBK-e7s7J2KFujsQ"
+    },
+            
+    {
+        id: "windr",
+        title: "Українізатор для Windrose",
+        img: "images/windr.jpg",
+        desc: "Гра з елементами виживання та відкритим світом, дія якої відбувається в альтернативній Епосі Піратства XVIII століття. Гравець бере на себе роль капітана, що кидає виклик легендарним піратам і занурюється в історію про зраду та помсту. У Windrose можна досліджувати процедурно згенеровані біоми, збирати ресурси, будувати укріплення і поселення, боротися з ворогами та шукати приховані таємниці й скарби. Windrose підтримує як одиночну гру, так і кооперативний режим на декількох гравців, дозволяючи разом із друзями вирушати у захопливу піратську пригоду. У грі також присутня система кастомізації кораблів і спорядження, численні підземелля та цікаві квести, що роблять світ живим і різноманітним.",
+        categories: ["Оновлено 30.04.26", "Deepseek", "Машпер"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/k2hw1LbQ#ZDTu30Jr95WBsBoOrpMM2Q"
+    },
+            
+    {
+        id: "styxb",
+        title: "Українізатор для Styx: Blades of Greed",
+        img: "images/styxb.jpg",
+        desc: "Тактична стелс-гра, де гравець керує хитрим гобліном на ім’я Стікс. Головний герой — майстер прихованого пересування, здатний непомітно пробиратися крізь охоронців, красти цінні предмети та використовувати різноманітні пастки, щоб досягти своїх цілей. Гра пропонує складні рівні з численними маршрутами, де уважність та стратегія важливіші за прямі бої. Сюжет гри розгортається у фантастичному світі, населеному гоблінами, ельфами та людьми, і зосереджений на місії Стікса — збагатитися, уникнути небезпек та маніпулювати оточенням. Гра відзначається унікальним поєднанням гумору, темної атмосфери та глибокої системи стелс-ігрових механік.",
+        categories: ["Оновлено 18.02.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/oqR2EIiL#ilmkSWLdjHESCoRJG27ccA"
+    },
+
+    {
+        id: "codev",
+        title: "Українізатор для Code Vein",
+        img: "images/codev.jpg",
+        desc: "Хардкорна екшн-RPG у постапокаліптичному світі, де кров є джерелом сили, прокляттям і єдиним способом вижити. Зруйнована реальність балансує на межі загибелі, а її мешканці — Безсмертні, приречені вічно битися з власною спрагою. Гравець — воїн, що блукає серед руїн колишньої цивілізації, де кожна перемога дається ціною болю, а кожна поразка — крок до втрати людяності. Тут важливо не просто рубати ворогів, а керувати кров’ю як ресурсом: обирати здібності, стилі бою та шляхи розвитку, що визначають, ким ти станеш — захисником, хижаком чи чудовиськом.",
+        categories: ["Оновлено 22.02.26", "Grok", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/hvJHhQwK#J-tAbGc6J1JJvpcEhWp9ZQ"
+    },
+            
+    {
+        id: "eriksh",
+        title: "Українізатор для Eriksholm: The Stolen Dream",
+        img: "images/eriksh.jpg",
+        desc: "Пригода, де межа між сном і реальністю розмита, а кошмари стають суворим законом. У містечку Еріксгольм заблукала свідомість людей перетворює звичне життя на лабіринт страху та таємних бажань. Гравець опиняється в центрі містичного полону, де минуле і майбутнє змішано у хаотичну павутину, а боротьба за збереження власної ідентичності стає ритуалом виживання. Тут не достатньо ховатися або боротися: потрібно розпізнавати знаки, впливати на сни ворогів і перетворювати їхні кошмари на власні союзні сили.",
+        categories: ["Оновлено 11.02.26", "Grok", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/YiZQXLyD#cQLWrlFcoXO2lAJ5v8AugA"
+    },
+            
+    {
+        id: "crisol",
+        title: "Українізатор для Crisol: Theater of Idols",
+        img: "images/crisol.jpg",
+        desc: "Жорстока екшн-пригода з елементами горору та чорного символізму, де культ віри, крові й фанатизму перетворює реальність на моторошну виставу. Гра занурює гравця у викривлений світ, де ідоли не рятують, а пожирають, а кожен крок сценою може стати останнім актом. Гравець опиняється в серці зловісного театру, де виживання — не головна мета, а лише побічний ефект правильного вибору. Тут потрібно не просто битися, а читати ритуали, ламати культові догми й використовувати саму віру ворогів проти них. Кожна сутичка — це баланс між фанатичною люттю та холодним розрахунком, між прямим опором і символічною жертвою.",
+        categories: ["Оновлено 13.02.26", "Grok", "Машпер"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/5iAUxJrB#YIltcN7Akdc17crMGW1bsg"
+    },
+            
+    {
+        id: "carmag",
+        title: "Українізатор для Carmageddon: Rogue Shift",
+        img: "images/carmag.jpg",
+        desc: "Аркадна гонка з безжальним характером, чорним гумором і культом хаосу на кожному повороті. Carmageddon: Rogue Shift переносить гравця у викривлений світ майбутнього, де швидкість і руйнування — єдина валюта успіху, а правила існують лише для того, щоб їх порушувати. Гравець стає учасником смертельно небезпечного турніру, у якому мета не просто дістатися фінішу, а домінувати будь-якою ціною: таранячи суперників, використовуючи абсурдну зброю та змінюючи саме середовище траси на свою користь. Кожна гонка — це вибір між ризиком і обережністю, між прямим зіткненням і підступною тактикою.",
+        categories: ["Оновлено 03.03.26", "Grok", "Машпер"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/c3gRyaxY#bugxs2b-DqrfhnaoCQwiLw"
+    },
+
+    {
+        id: "starr",
+        title: "Українізатор для StarRupture",
+        img: "images/starr.jpg",
+        desc: "Науково-фантастична гра на виживання з відкритим світом, що поєднує дослідження, будівництво та бойові зіткнення. Гравець опиняється на ворожій планеті з екстремальними умовами, агресивною фауною та періодичними катаклізмами, спричиненими активністю зорі, які змінюють довкілля й змушують постійно адаптуватися. Ігролад зосереджений на видобутку ресурсів, зведенні та автоматизації виробничих комплексів, розвитку технологій і захисті бази від нападів. Гру можна проходити як наодинці, так і в кооперативі, розподіляючи ролі між дослідженням, виробництвом і обороною.",
+        categories: ["Оновлено 06.09.26", "Deepseek", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/g2AhhSrQ#wwVgmxc20RNFxslYcrEgbw"
+    },
+
+    {
+        id: "stillwak",
+        title: "Українізатор для Still Wakes the Deep",
+        img: "images/stillwak.jpg",
+        desc: "Атмосферна психологічна гра жахів від першої особи, події якої розгортаються на ізольованій нафтовій платформі посеред холодного Північного моря. Після загадкової катастрофи герой опиняється в пастці серед руйнувань, шторму та невідомої загрози, що поступово охоплює платформу. Ігролад зосереджений на дослідженні, напруженому виживанні та оповідному досвіді без бойових дій. Гравець пересувається небезпечними локаціями, уникає смертельної небезпеки, розв’язує прості взаємодійні завдання й занурюється в похмуру історію, де головну роль відіграють атмосфера, звук і відчуття постійної тривоги.",
+        categories: ["Оновлено 02.08.26", "Grok", "DeepL", "Машпер"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/kuZHxLTI#CLNq9mzjeMZNz_3I-TqytA"
+    },
+
+    {
+        id: "flintl",
+        title: "Українізатор для Flintlock: The Siege of Dawn",
+        img: "images/flintl.jpg",
+        desc: "Динамічна рольова гра від третьої особи в епічному фентезійному світі, де магія і вогнепальна зброя поєднуються у масштабних битвах. Гравець опиняється в обложеному королівстві, де війни та надприродні загрози ставлять під загрозу долю всього континенту. Ігролад поєднує швидкі бої з використанням мушкетів, магії та тактичних комбінацій здібностей. Гравець може розвивати унікальний стиль ведення бою, вдосконалювати спорядження та відкривати нові вміння.",
+        categories: ["Оновлено 13.12.25", "Grok", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/FyRDFSzY#IRtxvgjWgHgW0VoEiwm9vA"
+    },
+
+    {
+        id: "ever2",
+        title: "Українізатор для Everspace 2",
+        img: "images/ever2.jpg",
+        desc: "Динамічна космічна рольова гра з видом від третьої особи, що поєднує дослідження галактики, стрілянину та розвиток персонажа. Гравець стає пілотом у відкритому космосі, де чекають небезпечні зоряні системи, піратські напади та загадкові технології древніх цивілізацій. Ігролад зосереджений на космічних боях у реальному часі, покращенні корабля та зброї, торгівлі й виконанні сюжетних і побічних завдань. Гравець досліджує різноманітні планети й станції, збирає ресурси та взаємодіє з фракціями, що впливають на розвиток подій.",
+        categories: ["Оновлено 12.12.25", "Grok", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/dzIBVYTR#E-c1KPHOP6VMw5XTQkZQHQ"
+    },
+
+    {
+        id: "routi",
+        title: "Українізатор для Routine",
+        img: "images/routi.jpg",
+        desc: "Атмосферна науково-фантастична хорор-гра від першої особи, натхненна ретрофутуристичною естетикою 1980-х років. Гравець опиняється на покинутій місячній станції, де тиша, порожні коридори та зламані системи створюють постійне відчуття ізоляції й загрози. Ігролад зосереджений на дослідженні станції, взаємодії з оточенням і виживанні без надмірної кількості бойових сутичок. Гравець використовує інструменти та обмежені ресурси, щоб уникати небезпечних роботів і розкривати доступ до нових секторів.",
+        categories: ["Оновлено 10.03.26", "Grok", "Машпер"],
+        quality: 15,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/tioEnBSJ#QEiYhi05-8imfwgJ_twjjQ"
+    },
+
+    {
+        id: "sleepa",
+        title: "Українізатор для SLEEP AWAKE",
+        img: "images/sleepa.jpg",
+        desc: "Психологічна горор-гра від першої особи з виразним сюрреалістичним стилем. Гравець опиняється у викривленому світі між сном і реальністю, де знайомі простори перетворюються на тривожні лабіринти, а власна свідомість стає головною загрозою. Ігролад зосереджений на дослідженні символічних локацій, спостереженні та униканні небезпек, а також поступовому розкритті історії через візуальні образи й атмосферні події. Гравець взаємодіє з оточенням, розгадує абстрактні головоломки та переживає зміни перспективи, що впливають на сприйняття світу.",
+        categories: ["Оновлено 03.12.25", "Grok", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/V75HlT5S#llZeelevuGNjdODVRBVRMw"
+    },
+
+    {
+        id: "aila",
+        title: "Українізатор для A.I.L.A",
+        img: "images/aila.jpg",
+        desc: "Атмосферна науково-фантастична гра від першої особи з елементами психологічного жаху та трилера. Гравець опиняється в ізольованому технологічному комплексі, де експериментальна система штучного інтелекту вийшла з-під контролю, а межа між реальністю та ілюзією поступово стирається. Ігролад зосереджений на дослідженні закритих приміщень, взаємодії з високотехнологічними пристроями та розв’язанні головоломок. Гравець має уникати небезпек, аналізувати поведінку A.I.L.A та робити вибір, який впливає на розвиток подій.",
+        categories: ["Оновлено 19.12.25", "Grok", "Машпер"],
+        quality: 20,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/t75ExQJR#TB15znR3JLB-Vcp_j8bazA"
+    },
+
+    {
+        id: "dreadz",
+        title: "Українізатор для DREADZONE",
+        img: "images/dreadz.jpg",
+        desc: "Напружена гра у жанрі виживання від першої особи з елементами психологічного жаху. Гравець опиняється в забороненій ізольованій зоні, де занедбані об’єкти, спотворена реальність і невідомі загрози створюють постійне відчуття страху та небезпеки. Ігролад будується на дослідженні похмурих локацій, зборі ресурсів і виживанні в умовах обмежених можливостей. Гравець змушений уникати небезпечних істот, використовувати імпровізовані інструменти та уважно стежити за психічним станом персонажа.",
+        categories: ["Оновлено 24.11.25", "Grok", "Машпер"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/E64BSTrI#uW6XshoW_K_W71SNAsUfhw"
+    },
+
+    {
+        id: "blood2",
+        title: "Українізатор для Vampire: The Masquerade - Bloodlines 2",
+        img: "images/blood2.jpg",
+        desc: "Рольова гра від першої особи в похмурому сучасному світі темного фентезі. Гравець бере на себе роль новонародженого вампіра в місті Сіетл, де приховане суспільство нічних істот живе за суворими правилами Маскараду, а боротьба за владу між кланами визначає долю міста. Ігролад поєднує нелінійні діалоги, дослідження міських районів та динамічні сутички з використанням надприродних здібностей. Вибір клану відкриває унікальні вміння й стилі проходження, дозволяючи діяти силою, маніпуляціями або прихованістю.",
+        categories: ["Оновлено 23.06.26", "Deepseek", "Grok", "Машред"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/VipDCAQD#LEhZs90yxEVBFS1Vzru2zg"
+    },
+
+    {
+        id: "etstrands",
+        title: "Українізатор для Eternal Strands",
+        img: "images/etstrands.jpg",
+        desc: "Пригодницька рольова гра від третьої особи у фентезійному світі, сповненому магії та давніх таємниць. Гравець вирушає в подорож зруйнованими землями, де залишки колись величної цивілізації переплітаються з небезпечними істотами та неконтрольованими магічними силами. Ігролад зосереджений на динамічних боях із гігантськими ворогами, взаємодії з оточенням та використанні магії, що впливає на фізику світу. Гравець може керувати стихіями, комбінувати здібності та тактично використовувати середовище для подолання перешкод і супротивників.",
+        categories: ["Оновлено 23.11.25", "Grok", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/NvAwRDBJ#y9varp8C-0Q2eCEqPRC4sw"
+    },
+            
+     {
+        id: "alirr",
+        title: "Українізатор для Alien: Rogue Incursion Evolved Edition",
+        img: "images/alirr.jpg",
+        desc: "Напружена пригодницька гра від першої особи в культовому науково-фантастичному всесвіті Alien. Гравець опиняється на ізольованому космічному комплексі, де кожен крок супроводжується постійною загрозою з боку ксеноморфів, а виживання залежить від уважності, швидкої реакції та обмежених ресурсів. Ігролад поєднує дослідження темних коридорів, тактичні сутички та елементи виживання. Гравець використовує футуристичну зброю, інструменти та сканери, щоб уникати смертельних істот або знищувати їх, поступово відкриваючи нові зони станції.",
+        categories: ["Оновлено 04.10.25", "Grok", "Машпер"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/IyhkzbRR#QY84XDAHqTGJsDwyXQwmrA"
+    },
+
+    {
+        id: "entro",
+        title: "Українізатор для The Entropy Centre",
+        img: "images/entro.jpg",
+        desc: "Логічна гра-головоломка від першої особи в науково-фантастичному світі. Гравець опиняється в ізольованому космічному об’єкті, де потрібно маніпулювати часом і гравітацією, щоб розв’язувати складні задачі та просуватися крізь лабіринти технологічної станції. Ігролад будується на використанні механіки «реверсії часу» для предметів і елементів середовища, що дозволяє вирішувати головоломки різними способами. Поступово відкриваються нові зони та технології, а сюжет розкриває таємниці станції та долю її мешканців.",
+        categories: ["Оновлено 21.08.25", "Grok", "Машпер"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/FjwwxTZQ#YJ1dP1A_hPyfx8TfZjVRSA"
+    },
+
+    {
+        id: "voidb",
+        title: "Українізатор для VOID/BREAKER",
+        img: "images/voidb.jpg",
+        desc: "Динамічний екшн із елементами roguelite та футуристичним сеттингом, де гравець опиняється у хаотичному світі, сповненому небезпечних ворогів і руйнувань. Дія гри відбувається в постапокаліптичній урбаністичній зоні з інтенсивними битвами та швидким темпом. Ігролад поєднує блискавичні бої в реальному часі, використання комбо та унікальних здібностей персонажа, а також дослідження процедурно згенерованих локацій. Гравець може покращувати спорядження, експериментувати зі стилями бою та адаптуватися до постійно змінюваних викликів світу VOID/BREAKER.",
+        categories: ["Оновлено 06.11.26", "Deepseek", "Машпер"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/xnwDWRgQ#l_lA_2ZqDY2ZRTxfANxIxA"
+    },
+
+    {
+        id: "echoed",
+        title: "Українізатор для Echoes of the End",
+        img: "images/echoed.jpg",
+        desc: "Сюжетна пригодницька екшн-гра від третьої особи у фентезійному світі, натхненному північними мотивами. Історія зосереджена на особистій драмі героїв, магії та загрозі масштабного конфлікту, що поступово розкривається через подорожі й діалоги. Ігролад поєднує кінематографічні бої, використання магічних здібностей і дослідження напіввідкритих локацій. Гравець взаємодіє з оточенням, розв’язує ситуаційні завдання та поступово відкриває нові вміння, які впливають як на сутички, так і на перебіг сюжету.",
+        categories: ["Оновлено 06.03.26", "Grok", "Машред"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/l2QRkQ4Z#OJvPYPQLRKfWaLX5tafRpg"
+    },
+
+    {
+        id: "robo",
+        title: "Українізатор для RoboCop: Rogue City",
+        img: "images/robo.jpg",
+        desc: "Сюжетний шутер від першої особи, дія якого відбувається у похмурому, злочинному Детройті між подіями фільмів RoboCop 2 та RoboCop 3. Гравець бере на себе роль РобоКопа — кіборга-поліцейського, що стоїть на сторожі закону у світі корпоративної жадібності та вуличного насильства. Ігролад поєднує методичні перестрілки з важким відчуттям руху, використання культової зброї Auto-9 і поліцейських інструментів, а також дослідження локацій і діалоги з вибором рішень. Виконуючи завдання, гравець дотримується Основних директив, розслідує злочини, ухвалює моральні рішення та впливає на перебіг історії.",
+        categories: ["Оновлено 19.07.25", "Grok", "DeepL", "Машред"],
+        quality: 80,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/8ygimIpY#ZFQnm8o_9M-CBOvW43ip_A"
+    },
+
+    {
+        id: "robounf",
+        title: "Українізатор для RoboCop: Rogue City - Unfinished Business",
+        img: "images/robounf.jpg",
+        desc: "Самостійне сюжетне доповнення до RoboCop: Rogue City, що продовжує історію легендарного кіборг-поліцейського у похмурому, корумпованому Детройті. Гравець знову бере на себе роль РобоКопа, розслідуючи нові злочини, пов’язані з корпораціями, бандами та незавершеними справами минулого. Ігролад зберігає акцент на повільному, важкому бойовому стилі з використанням фірмової зброї, зокрема Auto-9, а також на виборі рішень у діалогах. Гравець патрулює райони, виконує поліцейські завдання, ухвалює рішення згідно з Основними директивами та поступово розкриває нову сюжетну лінію, що поглиблює образ РобоКопа й світу гри.",
+        categories: ["Оновлено 18.07.25", "Grok", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/hqwECDyJ#3ehfcKJqDG8J8ef9Dl4j1w"
+    },
+
+    {
+        id: "hypbreak",
+        title: "Українізатор для Hyper Light Breaker",
+        img: "images/hypbreak.jpg",
+        desc: "Динамічний екшн-RPG з відкритими локаціями у стилі roguelite, події якої розгортаються у всесвіті Hyper Light. Світ гри сповнений яскравих кольорів, абстрактних форм і фрагментованої історії, що подається через оточення та візуальні образи. Ігролад поєднує швидкісний бій у реальному часі, дослідження процедурно змінюваних зон і розвиток персонажа. Гравець використовує холодну та вогнепальну зброю, ривки й паркур, здобуває спорядження та покращення, а також може проходити гру наодинці або в кооперативі.",
+        categories: ["Оновлено 23.08.25", "DeepL", "ChatGPT", "Машред"],
+        quality: 90,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/Jqw23QIQ#B4O4oVZqdCA3o5K7S4YDLA"
+    },
+
+    {
+        id: "enotr",
+        title: "Українізатор для Enotria: The Last Song",
+        img: "images/enotr.jpg",
+        desc: "Хардкорна рольова гра в стилі soulslike, натхненна італійським фольклором і сонячною естетикою Середземномор’я. Події розгортаються у світі, застиглому в нескінченній виставі, де маски визначають ролі, здібності та саму долю персонажів. Ігролад будується на динамічних боях, точному таймінгу й гнучкій системі білдів. Гравець змінює маски та ролі просто під час гри, комбінує навички, експериментує зі стилями бою й досліджує напіввідкриті локації, поступово розкриваючи таємниці світу Enotria.",
+        categories: ["Оновлено 23.09.26", "Grok", "DeepL", "Машпер"],
+        quality: 5,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/8jpAGAZI#-m3nohMOxjVB-OTmfzSm0A"
+    },
+
+    {
+        id: "thauma",
+        title: "Українізатор для The Thaumaturge",
+        img: "images/thauma.jpg",
+        desc: "Сюжетна рольова гра з ізометричним оглядом, дія якої відбувається у Варшаві початку ХХ століття в альтернативній версії реальності. Світ гри поєднує історичне тло з містикою: герой, тауматург, здатен взаємодіяти з надприродними істотами та прихованими сторонами людської душі. Ігролад зосереджений на розслідуваннях, діалогах і тактичних покрокових боях. Гравець вивчає слабкості персонажів, ухвалює морально неоднозначні рішення, впливає на розвиток сюжету та використовує сили салюторів у сутичках, де важливі стратегія й підготовка.",
+        categories: ["Оновлено 15.03.26", "DeepL", "ChatGPT", "Машред"],
+        quality: 10,
+	translated: 100,
+        patchLink: "https://mega.nz/folder/R6gQmRqY#dJ9pD1eEOlnbw-dcQYdIXA"
+    }
+];
+
+        // ========== ЗАМОВЛЕНІ ІГРИ (ВРУЧНУ) ==========
+        const orderedGames = [
+            { name: "Final Fantasy XVI", done: false },
+            { name: "Trails in the Sky 1st Chapter (ремейк)", done: false },
+            { name: "Gungrave G.O.R.E", done: true },
+            { name: "METAL GEAR SOLID 4 Guns of the Patriots - Master Collection Version", done: false },
+            { name: "Mediterranea Inferno", done: false },
+            { name: "Dead Rising 2", done: false },
+            { name: "Dragon Age™: The Veilguard", done: false },
+            { name: "Atelier Ryza 2: Lost Legends & the Secret Fairy DX", done: false },
+            { name: "Monster Hunter Wilds", done: false },
+            { name: "The Last Case of Benedict Fox Definitive Edition", done: false },
+            { name: "Gotham Knights", done: false },
+            { name: "AD Infinitum", done: true },
+            { name: "DAEMON X MACHINA", done: true },
+            { name: "Gears of War E-day", done: true },
+            { name: "Yakuza 0 Director's cut", done: false },
+            { name: "Yakuza Kiwami", done: false },
+            { name: "Nivalis Nights", done: true },
+            { name: "Call of Duty: Ghost", done: false },
+            { name: "Cloudpunk", done: true },
+            { name: "Warhammer 40,000: Mechanicus", done: true },
+            { name: "The Big Con", done: true }
+        ];
+
+        // ========== СТАН ==========
+        let selectedTranslation = "all";
+        let currentGameId = null;
+        let orderFilter = "all";
+        let visibleGames = [];
+        let isChatOpen = false;
+
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNK3QpqbBtUfJWVLF7-6503xBAcpg94ePXMHS0KlY7iWjQci2dDbBqYgN9UHP4E4BE/exec';
+        const ORDER_GAME_ID = 'mashper';
+        const CHAT_GAME_ID = 'chatukrplay';
+        const CHAT_AUTHOR_NAME = 'Анонім';
+
+        // ========== ДОПОМІЖНІ ==========
+        function escapeHtml(t) {
+            const d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
+        }
+
+        function getGameDate(cats) {
+            const upd = cats.find(c => c.includes('Оновлено'));
+            if (upd) {
+                const m = upd.match(/\d{2}\.\d{2}\.\d{2}/);
+                if (m) {
+                    const [d, mo, y] = m[0].split('.');
+                    return new Date(2000 + parseInt(y), parseInt(mo) - 1, parseInt(d));
+                }
+            }
+            return new Date(0);
+        }
+
+        // Перевірка, чи гра є новою (менше або дорівнює 3 дні з моменту публікації/оновлення)
+        function isNewGame(game) {
+            const updateDate = getGameDate(game.categories);
+            if (updateDate.getTime() === 0) return false;
+            
+            const now = new Date();
+            const diffMs = now - updateDate;
+            const diffDays = diffMs / (1000 * 60 * 60 * 24);
+            
+            return diffDays <= 3; 
+        }
+
+        // ========== КОМЕНТАРІ (для ігор) ==========
+        async function loadComments(gameId) {
+            const container = document.getElementById('comments-list');
+            if (!container) return;
+            container.innerHTML = '<div class="loading-comments">⏳ Завантаження коментарів...</div>';
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=get&gameId=${encodeURIComponent(gameId)}`);
+                const data = await res.json();
+                if (data.success && data.comments) {
+                    displayComments(data.comments);
+                    updateCommentsCount(data.comments.length);
+                } else {
+                    container.innerHTML = '<div class="no-comments">💬 Поки що немає коментарів. Будьте першим!</div>';
+                    updateCommentsCount(0);
+                }
+            } catch (e) {
+                container.innerHTML = '<div class="no-comments">⚠️ Не вдалося завантажити коментарі.</div>';
+            }
+        }
+
+        function displayComments(comments) {
+            const container = document.getElementById('comments-list');
+            if (!comments || comments.length === 0) {
+                container.innerHTML = '<div class="no-comments">💬 Поки що немає коментарів. Будьте першим!</div>';
+                return;
+            }
+            container.innerHTML = comments.map(c => `
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-author">👤 ${escapeHtml(c.author)}</span>
+                        <span class="comment-date">${formatDate(c.date)}</span>
+                    </div>
+                    <div class="comment-text">${escapeHtml(c.text)}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateCommentsCount(count) {
+            const el = document.getElementById('comments-count');
+            if (el) {
+                if (count === 0) el.textContent = 'Немає коментарів';
+                else if (count === 1) el.textContent = '1 коментар';
+                else if (count < 5) el.textContent = `${count} коментарі`;
+                else el.textContent = `${count} коментарів`;
+            }
+        }
+
+        async function addComment(gameId, author, text) {
+            if (!text.trim()) { showMsg('Введіть текст', 'error'); return; }
+            try {
+                const params = new URLSearchParams({ action: 'add', gameId, author: author || 'Анонім', text: text.trim() });
+                const res = await fetch(`${SCRIPT_URL}?${params}`);
+                const data = await res.json();
+                if (data.success) {
+                    showMsg('✅ Коментар додано!', 'success');
+                    document.getElementById('comment-author').value = '';
+                    document.getElementById('comment-text').value = '';
+                    await loadComments(gameId);
+                } else {
+                    showMsg(`❌ ${data.error}`, 'error');
+                }
+            } catch (e) { showMsg('❌ Помилка', 'error'); }
+        }
+
+        function formatDate(ds) {
+            const d = new Date(ds), now = new Date(), diff = now - d;
+            if (diff < 60000) return 'щойно';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)} хв тому`;
+            if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+            return d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
+        }
+
+        function showMsg(msg, type) {
+            const el = document.getElementById('comment-msg');
+            if (el) {
+                el.textContent = msg;
+                el.className = `comment-message ${type}`;
+                setTimeout(() => { el.textContent = ''; el.className = 'comment-message'; }, 5000);
+            }
+        }
+
+        function initComments(gameId) {
+            currentGameId = gameId;
+            let container = document.getElementById('comments-full');
+            if (!container) {
+                const modalBody = document.getElementById('modal-body');
+                if (!modalBody) return;
+                container = document.createElement('div');
+                container.id = 'comments-full';
+                container.className = 'comments-full-width';
+                container.innerHTML = `
+                    <div class="comments-title">💬 Коментарі <span id="comments-count" class="comments-count">Завантаження...</span></div>
+                    <div id="comment-msg" class="comment-message"></div>
+                    <div id="comments-list" class="comments-list"></div>
+                    <div class="comment-form">
+                        <input type="text" id="comment-author" placeholder="👤 Ваше ім'я (необов'язково)" maxlength="50">
+                        <textarea id="comment-text" placeholder="💬 Напишіть коментар... (Ctrl+Enter)" maxlength="2000"></textarea>
+                        <button onclick="submitComment()">📤 Залишити коментар</button>
+                    </div>
+                `;
+                modalBody.appendChild(container);
+            }
+            loadComments(gameId);
+            const ta = document.getElementById('comment-text');
+            if (ta) {
+                ta.removeEventListener('keydown', keyHandler);
+                ta.addEventListener('keydown', keyHandler);
+            }
+        }
+
+        function keyHandler(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                submitComment();
+            }
+        }
+
+        async function submitComment() {
+            const author = document.getElementById('comment-author')?.value.trim() || '';
+            const text = document.getElementById('comment-text')?.value.trim();
+            if (!currentGameId || !text) return;
+            await addComment(currentGameId, author, text);
+        }
+
+        // ========== КАРТКИ ІГОР ==========
+        function createCard(game, index) {
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            card.style.animationDelay = `${index * 90}ms`;
+            let tagsHTML = game.categories.map(cat => {
+                let cls = '';
+                if (cat.includes('Оновлено')) cls = 'tag-updated';
+                return `<span class="tag ${cls}">${escapeHtml(cat)}</span>`;
+            }).join('');
+
+            const showNew = isNewGame(game);
+
+            card.innerHTML = `
+                <div class="card-img-wrap">
+                    <img src="${game.img}" alt="${escapeHtml(game.title)}" loading="lazy"
+                         onerror="this.src='https://placehold.co/400x600/1a2a4a/ffcc00?text=UkrPlay'">
+                    ${showNew ? '<span class="card-ribbon">NEW</span>' : ''}
+                </div>
+                <div class="game-info">
+                    <h3>${escapeHtml(game.title)}</h3>
+                    <div>${tagsHTML}</div>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Якість редагування</span><span>${game.quality}%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:${game.quality}%"></div></div>
+                    </div>
+                    <div class="translated-label">
+                        <span>📝 Перекладено</span>
+                        <span>${game.translated}%</span>
+                    </div>
+                </div>
+            `;
+            card.onclick = () => { showModal(game); history.replaceState(null, null, '#' + game.id); };
+            return card;
+        }
+
+        function renderGames() {
+            const grid = document.getElementById('gamesGrid');
+            if (!grid) return;
+            let sorted = [...games];
+
+            const sortBy = document.getElementById('sortSelect').value;
+            if (sortBy === 'quality') sorted.sort((a, b) => b.quality - a.quality);
+            else if (sortBy === 'name') sorted.sort((a, b) => a.title.localeCompare(b.title, 'uk'));
+            else if (sortBy === 'updated') sorted.sort((a, b) => getGameDate(b.categories) - getGameDate(a.categories));
+
+            visibleGames = sorted.filter(g => {
+                return selectedTranslation === 'all' || g.categories.includes(selectedTranslation);
+            });
+
+            grid.innerHTML = '';
+            if (visibleGames.length === 0) {
+                grid.innerHTML = '<div class="no-results">🔍 Нічого не знайдено</div>';
+            } else {
+                visibleGames.forEach((g, i) => grid.appendChild(createCard(g, i)));
+            }
+            applyFilters();
+        }
+
+        function sortGames() { renderGames(); }
+
+        function applyFilters() {
+            const term = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
+            const cards = document.querySelectorAll('#gamesGrid .game-card');
+            let visible = 0;
+            cards.forEach(card => {
+                const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+                const match = !term || title.includes(term);
+                card.style.display = match ? '' : 'none';
+                if (match) visible++;
+            });
+            const grid = document.getElementById('gamesGrid');
+            let noRes = document.getElementById('no-results-search');
+            if (visible === 0 && cards.length) {
+                if (!noRes) {
+                    const msg = document.createElement('div');
+                    msg.id = 'no-results-search';
+                    msg.className = 'no-results';
+                    msg.textContent = '🔍 Нічого не знайдено';
+                    grid.appendChild(msg);
+                }
+            } else if (noRes) { noRes.remove(); }
+        }
+
+        // ========== МОДАЛЬНЕ ВІКНО ГРИ ==========
+        function showModal(game) {
+            const modalBody = document.getElementById('modal-body');
+            const oldComments = document.getElementById('comments-full');
+            if (oldComments) oldComments.remove();
+
+            let tagsHTML = game.categories.map(cat => {
+                let cls = '';
+                if (cat.includes('Оновлено')) cls = 'tag-updated';
+                return `<span class="tag ${cls}">${escapeHtml(cat)}</span>`;
+            }).join('');
+
+            modalBody.innerHTML = `
+                <div class="modal-top">
+                    <div class="modal-img"><img src="${game.img}" alt="${escapeHtml(game.title)}" onerror="this.src='https://placehold.co/400x600/1a2a4a/ffcc00?text=UkrPlay'"></div>
+                    <div class="modal-info">
+                        <h2>${escapeHtml(game.title)}</h2>
+                        <div class="modal-desc">${escapeHtml(game.desc)}</div>
+                        <div style="margin:10px 0;">${tagsHTML}</div>
+                        <div class="progress-container" style="margin:15px 0;">
+                            <div class="progress-label"><span>Якість редагування</span><span>${game.quality}%</span></div>
+                            <div class="progress-bar" style="height:6px;"><div class="progress-fill" style="width:${game.quality}%"></div></div>
+                        </div>
+                        <div class="translated-label" style="margin:10px 0;">
+                            <span>📝 Перекладено</span>
+                            <span>${game.translated}%</span>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="download-btn" onclick="window.open('${game.patchLink}','_blank')">📥 Завантажити</button>
+                            <button class="share-btn" onclick="shareGame('${escapeHtml(game.title)}','${game.id}')">🔗 Поділитися</button>
+                            <button class="back-btn" onclick="closeModalAndGoHome()">← Усі ігри</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            updateModalNav();
+            setTimeout(() => initComments(game.id), 100);
+        }
+
+        function navigateGame(direction) {
+            if (!visibleGames.length) return;
+            let idx = visibleGames.findIndex(g => g.id === currentGameId);
+            if (idx === -1) idx = 0;
+            let newIdx = idx + direction;
+            if (newIdx < 0) newIdx = visibleGames.length - 1;
+            if (newIdx >= visibleGames.length) newIdx = 0;
+            const newGame = visibleGames[newIdx];
+            currentGameId = newGame.id;
+            history.replaceState(null, null, '#' + newGame.id);
+            showModal(newGame);
+            document.querySelector('#modal .modal-content')?.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateModalNav() {
+            if (!visibleGames.length) return;
+            const prevBtn = document.getElementById('modalNavPrev');
+            const nextBtn = document.getElementById('modalNavNext');
+            if (prevBtn) prevBtn.disabled = visibleGames.length <= 1;
+            if (nextBtn) nextBtn.disabled = visibleGames.length <= 1;
+        }
+
+        function shareGame(title, id) {
+            const url = window.location.origin + window.location.pathname + '#' + id;
+            if (navigator.share) {
+                navigator.share({ title, text: 'Перегляньте українізатор для ' + title, url }).catch(() => copyToClip(url));
+            } else {
+                copyToClip(url);
+            }
+        }
+
+        function copyToClip(t) {
+            navigator.clipboard.writeText(t).then(() => showMsg('✅ Посилання скопійовано!', 'success')).catch(() => {});
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function closeModalAndGoHome() {
+            closeModal();
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                history.replaceState(null, null, window.location.pathname);
+            }, 200);
+        }
+
+        // ========== СПИСОК ЗАМОВЛЕНЬ (ТІЛЬКИ РУЧНИЙ) ==========
+        function renderOrders() {
+            const list = document.getElementById('ordersList');
+            const statsEl = document.getElementById('ordersStats');
+            if (!list) return;
+
+            const filtered = orderedGames.filter(g => {
+                if (orderFilter === 'done') return g.done;
+                if (orderFilter === 'todo') return !g.done;
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty">🔍 Нічого не знайдено</div>';
+            } else {
+                list.innerHTML = filtered.map((g, i) => {
+                    const originalIndex = orderedGames.indexOf(g) + 1;
+                    const badge = g.done
+                        ? '<span class="badge done">✅ Зроблено</span>'
+                        : '<span class="badge todo">⏳ Не зроблено</span>';
+                    const authorMini = g.author ? `<span class="order-author-mini">від ${escapeHtml(g.author)}</span>` : '';
+                    return `
+                        <div class="order-item" style="animation-delay:${i * 35}ms">
+                            <div class="order-name">
+                                <span class="order-num">${originalIndex}.</span>${escapeHtml(g.name)}${authorMini}
+                            </div>
+                            ${badge}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const total = orderedGames.length;
+            const done = orderedGames.filter(g => g.done).length;
+            const todo = total - done;
+            statsEl.innerHTML = `
+                <div class="stat">Всього: <b>${total}</b></div>
+                <div class="stat">✅ Зроблено: <b>${done}</b></div>
+                <div class="stat">⏳ Не зроблено: <b>${todo}</b></div>
+            `;
+        }
+
+        // ========== МОДАЛЬНЕ ВІКНО ЗАМОВЛЕННЯ ==========
+        function openOrderForm() {
+            document.getElementById('orderModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => document.getElementById('order-game-name')?.focus(), 100);
+            loadOrderComments();
+        }
+
+        function closeOrderForm() {
+            document.getElementById('orderModal').style.display = 'none';
+            document.body.style.overflow = '';
+            const msgEl = document.getElementById('order-msg');
+            if (msgEl) { msgEl.style.display = 'none'; msgEl.textContent = ''; }
+            const msgEl2 = document.getElementById('order-comments-msg');
+            if (msgEl2) { msgEl2.style.display = 'none'; msgEl2.textContent = ''; }
+        }
+
+        async function loadOrderComments() {
+            const container = document.getElementById('order-comments-list');
+            const countEl = document.getElementById('order-comments-count');
+            if (!container) return;
+            
+            container.innerHTML = '<div class="loading-comments">⏳ Завантаження коментарів...</div>';
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=get&gameId=${ORDER_GAME_ID}`);
+                const data = await res.json();
+                if (data.success && data.comments) {
+                    renderOrderComments(data.comments);
+                    if (countEl) {
+                        if (data.comments.length === 0) countEl.textContent = 'Немає коментарів';
+                        else if (data.comments.length === 1) countEl.textContent = '1 коментар';
+                        else if (data.comments.length < 5) countEl.textContent = `${data.comments.length} коментарі`;
+                        else countEl.textContent = `${data.comments.length} коментарів`;
+                    }
+                } else {
+                    container.innerHTML = '<div class="no-comments">💬 Поки що немає коментарів. Будьте першим!</div>';
+                    if (countEl) countEl.textContent = 'Немає коментарів';
+                }
+            } catch (e) {
+                container.innerHTML = '<div class="no-comments">⚠️ Не вдалося завантажити коментарі.</div>';
+                if (countEl) countEl.textContent = 'Помилка';
+            }
+        }
+
+        function renderOrderComments(comments) {
+            const container = document.getElementById('order-comments-list');
+            if (!container) return;
+            if (!comments || comments.length === 0) {
+                container.innerHTML = '<div class="no-comments">💬 Поки що немає коментарів. Будьте першим!</div>';
+                return;
+            }
+            container.innerHTML = comments.map(c => `
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-author">👤 ${escapeHtml(c.author)}</span>
+                        <span class="comment-date">${formatDate(c.date)}</span>
+                    </div>
+                    <div class="comment-text">${escapeHtml(c.text)}</div>
+                </div>
+            `).join('');
+        }
+
+        async function submitOrderComment() {
+            const author = document.getElementById('order-standalone-author')?.value.trim() || 'Анонім';
+            const text = document.getElementById('order-standalone-text')?.value.trim();
+            const msgEl = document.getElementById('order-comments-msg');
+
+            if (!text) {
+                if (msgEl) {
+                    msgEl.style.display = 'block';
+                    msgEl.textContent = '❌ Введіть текст коментаря';
+                    msgEl.className = 'comment-message error';
+                }
+                return;
+            }
+
+            if (msgEl) {
+                msgEl.style.display = 'block';
+                msgEl.textContent = '⏳ Надсилаємо коментар...';
+                msgEl.className = 'comment-message';
+            }
+
+            try {
+                const params = new URLSearchParams({
+                    action: 'add',
+                    gameId: ORDER_GAME_ID,
+                    author: author,
+                    text: text
+                });
+                const res = await fetch(`${SCRIPT_URL}?${params}`);
+                const data = await res.json();
+
+                if (data.success) {
+                    if (msgEl) {
+                        msgEl.textContent = '✅ Коментар додано!';
+                        msgEl.className = 'comment-message success';
+                    }
+                    document.getElementById('order-standalone-author').value = '';
+                    document.getElementById('order-standalone-text').value = '';
+                    await loadOrderComments();
+                } else {
+                    if (msgEl) {
+                        msgEl.textContent = `❌ Помилка: ${data.error || 'невідомо'}`;
+                        msgEl.className = 'comment-message error';
+                    }
+                }
+            } catch (err) {
+                if (msgEl) {
+                    msgEl.textContent = '❌ Помилка сервера';
+                    msgEl.className = 'comment-message error';
+                }
+            }
+        }
+
+        async function submitOrder(e) {
+            if (e) e.preventDefault();
+            const author = document.getElementById('order-author')?.value.trim() || 'Анонім';
+            const name = document.getElementById('order-game-name')?.value.trim();
+            const msgEl = document.getElementById('order-msg');
+
+            if (!name) {
+                if (msgEl) {
+                    msgEl.style.display = 'block';
+                    msgEl.textContent = '❌ Введіть назву гри';
+                    msgEl.className = 'comment-message error';
+                }
+                return false;
+            }
+
+            orderedGames.push({ name, done: false, author: author });
+            renderOrders();
+
+            if (msgEl) {
+                msgEl.style.display = 'block';
+                msgEl.textContent = '⏳ Надсилаємо заявку...';
+                msgEl.className = 'comment-message';
+            }
+
+            try {
+                const params = new URLSearchParams({
+                    action: 'add',
+                    gameId: ORDER_GAME_ID,
+                    author: author,
+                    text: name
+                });
+                const res = await fetch(`${SCRIPT_URL}?${params}`);
+                const data = await res.json();
+
+                if (data.success) {
+                    if (msgEl) {
+                        msgEl.textContent = '✅ Заявку прийнято! Гру додано до списку.';
+                        msgEl.className = 'comment-message success';
+                    }
+                    document.getElementById('order-author').value = '';
+                    document.getElementById('order-game-name').value = '';
+                    await loadOrderComments();
+                } else {
+                    if (msgEl) {
+                        msgEl.textContent = `⚠️ Локально додано, але сервер: ${data.error || 'помилка'}`;
+                        msgEl.className = 'comment-message error';
+                    }
+                }
+            } catch (err) {
+                if (msgEl) {
+                    msgEl.textContent = '⚠️ Локально додано (сервер недоступний)';
+                    msgEl.className = 'comment-message error';
+                }
+            }
+
+            return false;
+        }
+
+        // ========== ЖИВИЙ ЧАТ (АНОНІМНИЙ) ==========
+        function toggleChat() {
+            isChatOpen = !isChatOpen;
+            const win = document.getElementById('chatWindow');
+            const toggle = document.getElementById('chatToggle');
+            
+            if (isChatOpen) {
+                win.classList.add('open');
+                toggle.classList.add('open');
+                toggle.innerHTML = '✕';
+                loadChatMessages();
+                setTimeout(() => {
+                    const msgs = document.getElementById('chatMessages');
+                    if (msgs) msgs.scrollTop = msgs.scrollHeight;
+                }, 300);
+            } else {
+                win.classList.remove('open');
+                toggle.classList.remove('open');
+                toggle.innerHTML = '💬';
+            }
+        }
+
+        let chatPollInterval = null;
+
+        async function loadChatMessages() {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
+            
+            if (container.children.length === 0 || container.querySelector('.loading-comments')) {
+                container.innerHTML = '<div class="loading-comments">⏳ Завантаження...</div>';
+            }
+
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=get&gameId=${CHAT_GAME_ID}`);
+                const data = await res.json();
+                if (data.success && data.comments) {
+                    renderChatMessages(data.comments);
+                } else {
+                    container.innerHTML = '<div class="no-comments">💬 Чат порожній. Почніть розмову!</div>';
+                }
+            } catch (e) {
+                container.innerHTML = '<div class="no-comments">⚠️ Не вдалося завантажити чат.</div>';
+            }
+        }
+
+        function renderChatMessages(comments) {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
+            
+            if (!comments || comments.length === 0) {
+                container.innerHTML = '<div class="no-comments">💬 Чат порожній. Почніть розмову!</div>';
+                return;
+            }
+
+            const isScrolledToBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+            
+            container.innerHTML = comments.map(c => {
+                const isSelf = (c.author === CHAT_AUTHOR_NAME);
+                return `
+                    <div class="chat-msg ${isSelf ? 'self' : ''}">
+                        ${!isSelf ? `<div class="chat-msg-author">${escapeHtml(c.author)}</div>` : ''}
+                        <div class="chat-msg-text">${escapeHtml(c.text)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            if (isScrolledToBottom) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        async function sendChatMessage(e) {
+            if (e) e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const text = input?.value.trim();
+            if (!text) return;
+
+            input.value = '';
+            
+            const container = document.getElementById('chatMessages');
+            const tempMsg = document.createElement('div');
+            tempMsg.className = 'chat-msg self';
+            tempMsg.innerHTML = `<div class="chat-msg-text" style="opacity:0.6;">${escapeHtml(text)} ⏳</div>`;
+            container.appendChild(tempMsg);
+            container.scrollTop = container.scrollHeight;
+
+            try {
+                const params = new URLSearchParams({
+                    action: 'add',
+                    gameId: CHAT_GAME_ID,
+                    author: CHAT_AUTHOR_NAME,
+                    text: text
+                });
+                await fetch(`${SCRIPT_URL}?${params}`);
+                await loadChatMessages();
+            } catch (err) {
+                console.error('Помилка відправки чату:', err);
+                await loadChatMessages();
+            }
+
+            return false;
+        }
+
+        function startChatPolling() {
+            if (chatPollInterval) clearInterval(chatPollInterval);
+            chatPollInterval = setInterval(() => {
+                if (isChatOpen) {
+                    loadChatMessages();
+                }
+            }, 5000);
+        }
+
+        // Перетягування вікна чату
+        function initChatDragging() {
+            const win = document.getElementById('chatWindow');
+            const header = document.getElementById('chatHeader');
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+
+            function getRect() {
+                const rect = win.getBoundingClientRect();
+                return { left: rect.left, top: rect.top };
+            }
+
+            function startDrag(e) {
+                if (e.target.closest('.chat-minimize')) return;
+                
+                isDragging = true;
+                win.classList.add('dragging');
+                
+                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                
+                const rect = getRect();
+                win.style.bottom = 'auto';
+                win.style.right = 'auto';
+                win.style.left = rect.left + 'px';
+                win.style.top = rect.top + 'px';
+
+                startX = clientX;
+                startY = clientY;
+                initialLeft = rect.left;
+                initialTop = rect.top;
+                
+                if (e.cancelable) e.preventDefault();
+            }
+
+            function onDrag(e) {
+                if (!isDragging) return;
+                
+                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+                
+                let newLeft = initialLeft + dx;
+                let newTop = initialTop + dy;
+                
+                const maxLeft = window.innerWidth - win.offsetWidth;
+                const maxTop = window.innerHeight - win.offsetHeight;
+                
+                newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+                newTop = Math.max(0, Math.min(newTop, maxTop));
+                
+                win.style.left = newLeft + 'px';
+                win.style.top = newTop + 'px';
+                
+                if (e.cancelable) e.preventDefault();
+            }
+
+            function stopDrag() {
+                if (!isDragging) return;
+                isDragging = false;
+                win.classList.remove('dragging');
+            }
+
+            header.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mouseup', stopDrag);
+
+            header.addEventListener('touchstart', startDrag, { passive: false });
+            document.addEventListener('touchmove', onDrag, { passive: false });
+            document.addEventListener('touchend', stopDrag);
+        }
+
+        // ========== ІНІЦІАЛІЗАЦІЯ ==========
+        function initFilters() {
+            document.querySelectorAll('[data-filter="translation"]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-filter="translation"]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedTranslation = btn.getAttribute('data-value');
+                    renderGames();
+                });
+            });
+
+            document.querySelectorAll('[data-order-filter]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-order-filter]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    orderFilter = btn.getAttribute('data-order-filter');
+                    renderOrders();
+                });
+            });
+        }
+
+        function goToHome() {
+            const logo = document.querySelector('.logo');
+            logo.classList.add('logo-click');
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                history.replaceState(null, null, window.location.pathname);
+                logo.classList.remove('logo-click');
+            }, 450);
+        }
+
+        function initModalSwipe() {
+            const modalContent = document.querySelector('#modal .modal-content');
+            if (!modalContent) return;
+            let startX = 0, startY = 0, isDragging = false, isHorizontal = null;
+
+            modalContent.addEventListener('touchstart', e => {
+                if (e.target.closest('button, a, input, textarea')) return;
+                if (e.touches.length !== 1) return;
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isDragging = true;
+                isHorizontal = null;
+            }, { passive: true });
+
+            modalContent.addEventListener('touchmove', e => {
+                if (!isDragging || e.touches.length !== 1) return;
+                const dx = e.touches[0].clientX - startX;
+                const dy = e.touches[0].clientY - startY;
+                if (isHorizontal === null) {
+                    if (Math.abs(dx) > Math.abs(dy) + 8) isHorizontal = true;
+                    else if (Math.abs(dy) > Math.abs(dx) + 8) isHorizontal = false;
+                }
+                if (isHorizontal) e.preventDefault();
+            }, { passive: false });
+
+            modalContent.addEventListener('touchend', e => {
+                if (!isDragging) return;
+                isDragging = false;
+                if (!isHorizontal) return;
+                const dx = e.changedTouches[0].clientX - startX;
+                const threshold = 70;
+                if (dx < -threshold) navigateGame(1);
+                else if (dx > threshold) navigateGame(-1);
+            }, { passive: true });
+        }
+
+        function openFromHash() {
+            const hash = window.location.hash.substring(1);
+            if (!hash) { closeModal(); return; }
+            const game = games.find(g => g.id === hash);
+            if (game) {
+                let idx = visibleGames.findIndex(g => g.id === hash);
+                if (idx === -1) {
+                    selectedTranslation = 'all';
+                    document.querySelectorAll('[data-filter="translation"]').forEach(b => {
+                        b.classList.toggle('active', b.getAttribute('data-value') === 'all');
+                    });
+                    renderGames();
+                }
+                showModal(game);
+            } else {
+                closeModal();
+            }
+        }
+
+        function initScrollTop() {
+            const btn = document.getElementById('scrollTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) btn.classList.add('show');
+                else btn.classList.remove('show');
+            }, { passive: true });
+        }
+
+        function updateGamesCount() {
+            document.getElementById('gamesCount').textContent = games.length;
+        }
+
+        // ========== РЕЄСТРАЦІЯ SERVICE WORKER ДЛЯ PWA ==========
+        function initPWA() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(reg => {
+                            console.log('Service Worker зареєстровано:', reg.scope);
+                        })
+                        .catch(err => {
+                            console.warn('Помилка реєстрації Service Worker:', err);
+                        });
+                });
+            }
+        }
+
+        // ========== СТАРТ ==========
+        window.onload = () => {
+            initScrollTop();
+            updateGamesCount();
+            initFilters();
+            renderGames();
+            renderOrders();
+            initModalSwipe();
+            initChatDragging();
+            startChatPolling();
+            initPWA();
+            openFromHash();
+
+            window.addEventListener('hashchange', openFromHash);
+
+            document.getElementById('modal').addEventListener('click', e => {
+                if (e.target === e.currentTarget) closeModal();
+            });
+            document.getElementById('orderModal').addEventListener('click', e => {
+                if (e.target === e.currentTarget) closeOrderForm();
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    if (document.getElementById('modal').style.display === 'flex') closeModal();
+                    if (document.getElementById('orderModal').style.display === 'flex') closeOrderForm();
+                }
+                if (document.getElementById('modal').style.display === 'flex') {
+                    if (e.target.matches('input, textarea')) return;
+                    if (e.key === 'ArrowLeft') navigateGame(-1);
+                    if (e.key === 'ArrowRight') navigateGame(1);
+                }
+            });
+        };
+    </script>
+</body>
+</html>
